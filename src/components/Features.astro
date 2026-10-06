@@ -1,0 +1,43 @@
+---
+const advantages = [
+  {
+    title: "Zero JS por Defecto",
+    desc: "Astro compite enviando únicamente HTML estático y CSS. El JavaScript se carga de manera diferida solo cuando hay componentes interactivos.",
+    icon: "🚀"
+  },
+  {
+    title: "Arquitectura de Islas",
+    desc: "Los componentes interactivos (React, Vue, Svelte) se aíslan de forma independiente sin ralentizar el resto de la página web.",
+    icon: "🏝️"
+  },
+  {
+    title: "Optimización de Build",
+    desc: "Imágenes, fuentes y scripts son comprimidos y optimizados de manera automatizada durante el proceso de compilación.",
+    icon: "⚙️"
+  },
+  {
+    title: "SEO Orgánico Imparable",
+    desc: "Al ofrecer tiempos de respuesta ultrarrápidos, Google indexa y posiciona tu sitio en las primeras posiciones.",
+    icon: "📈"
+  }
+];
+---
+
+<section id="ventajas" class="py-24 bg-[#090d16] border-t border-slate-800/80">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h2 class="text-xs font-bold text-cyan-400 tracking-widest uppercase mb-3">Tecnología del Futuro</h2>
+      <p class="text-3xl md:text-5xl font-extrabold text-white">¿Por qué elegir Astro para tu sitio web en Kadmiel?</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {advantages.map((item) => (
+        <div class="bg-slate-900/60 border border-slate-800 p-8 rounded-2xl hover:border-violet-500/50 hover:bg-slate-900 transition-all group">
+          <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">{item.icon}</div>
+          <h3 class="text-xl font-bold text-white mb-3">{item.title}</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
