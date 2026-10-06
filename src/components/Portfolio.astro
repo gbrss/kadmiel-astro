@@ -1,69 +1,58 @@
 ---
 /**
  * Portafolio — carrusel de proyectos.
- * Reemplaza title, category, url, score, description e image cuando tengas capturas reales.
- * image: ruta en /public (ej. /portfolio/proyecto-1.webp) o URL externa.
+ * image: archivo en public/portafolio/ → ruta "/portafolio/archivo.png"
  */
 const projects = [
   {
     id: 1,
-    title: 'Clínica Dental Norte',
-    category: 'Sitio Corporativo',
-    url: '#',
+    title: 'Minera Milenium',
+    category: 'Sitio Corporativo Minería',
+    url: 'https://mineramilenium.cl',
     score: 99,
-    description: 'Sitio multi-sección con agenda y SEO local. Carga bajo 0.7 s en móvil.',
-    accent: 'from-violet-500 to-indigo-500',
-    tags: ['Astro', 'SEO', 'Formularios'],
+    description: 'Sitio corporativo para el sector minero: presencia digital sólida, SEO y contacto directo.',
+    image: '/portafolio/mineramilenium.png',
+    tags: ['Corporativo', 'SEO', 'Astro'],
   },
   {
     id: 2,
-    title: 'Moda Urbana Store',
-    category: 'Catálogo / Tienda',
-    url: '#',
-    score: 98,
-    description: 'Catálogo de productos con filtros y checkout por WhatsApp. 100 en Performance.',
-    accent: 'from-cyan-500 to-emerald-500',
-    tags: ['Catálogo', 'WhatsApp', 'Core Web Vitals'],
+    title: 'Productos Náuticos',
+    category: 'Tienda Web / Catálogo',
+    url: 'https://productosnauticos.cl',
+    score: 100,
+    description: 'Catálogo online de productos náuticos con navegación rápida y foco en conversión.',
+    image: '/portafolio/productosnauticos.png',
+    tags: ['Catálogo', 'Conversión', 'Astro'],
   },
   {
     id: 3,
-    title: 'Launch SaaS Pro',
-    category: 'Landing Page',
-    url: '#',
-    score: 100,
-    description: 'Landing de conversión para lanzamiento de producto. A/B ready y ultraligera.',
-    accent: 'from-fuchsia-500 to-violet-500',
-    tags: ['Landing', 'Conversión', 'Astro'],
+    title: 'Innovatar',
+    category: 'Landing + Agente Bot IA',
+    url: 'https://innovatar.cl',
+    score: 97,
+    description: 'Landing de automatización de negocios en Chile con agente bot IA integrado.',
+    image: '/portafolio/innovatar.png',
+    tags: ['Landing', 'Bot IA', 'Astro'],
   },
   {
     id: 4,
-    title: 'RestoBar Pacífico',
-    category: 'Landing + Redes',
-    url: '#',
-    score: 97,
-    description: 'Carta digital, reservas y presencia en redes. Diseño oscuro y menú rápido.',
-    accent: 'from-amber-500 to-orange-500',
-    tags: ['Landing', 'Menú', 'Local'],
+    title: 'Brahuier Tours',
+    category: 'Landing Page / Turismo',
+    url: 'https://brahuertours.cl',
+    score: 98,
+    description: 'Turismo y transporte: landing de alta conversión con Webpay y Core Web Vitals altos.',
+    image: '/portafolio/brahuertours.png',
+    tags: ['Turismo', 'Webpay', 'Core Web Vitals'],
   },
   {
     id: 5,
-    title: 'Inmobiliaria Andes',
-    category: 'Sitio Corporativo',
-    url: '#',
+    title: 'Pearl I Am',
+    category: 'Sitio Corporativo Holding',
+    url: 'https://pearl-iam.cl',
     score: 99,
-    description: 'Fichas de propiedades, filtros y contacto directo. Indexación rápida en Google.',
-    accent: 'from-sky-500 to-blue-600',
-    tags: ['Corporativo', 'Filtros', 'SEO'],
-  },
-  {
-    id: 6,
-    title: 'FitStudio Online',
-    category: 'Landing Page',
-    url: '#',
-    score: 100,
-    description: 'Captación de leads para clases online. Formulario + chatbot de WhatsApp.',
-    accent: 'from-rose-500 to-pink-500',
-    tags: ['Leads', 'Chatbot', 'Mobile-first'],
+    description: 'Sitio multi-sección para holding: liderazgo, sostenibilidad y carga sub-segundo.',
+    image: '/portafolio/pearl-iam.png',
+    tags: ['Corporativo', 'SEO', 'Astro'],
   },
 ];
 ---
@@ -81,112 +70,56 @@ const projects = [
         </p>
       </div>
       <div class="flex items-center gap-2 shrink-0">
-        <button
-          type="button"
-          id="pf-prev"
-          aria-label="Proyecto anterior"
-          class="w-11 h-11 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 hover:border-cyan-500/50 hover:text-white transition-colors flex items-center justify-center"
-        >
+        <button type="button" id="pf-prev" aria-label="Proyecto anterior"
+          class="w-11 h-11 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 hover:border-cyan-500/50 hover:text-white transition-colors flex items-center justify-center">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         </button>
-        <button
-          type="button"
-          id="pf-next"
-          aria-label="Proyecto siguiente"
-          class="w-11 h-11 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 hover:border-cyan-500/50 hover:text-white transition-colors flex items-center justify-center"
-        >
+        <button type="button" id="pf-next" aria-label="Proyecto siguiente"
+          class="w-11 h-11 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 hover:border-cyan-500/50 hover:text-white transition-colors flex items-center justify-center">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </button>
       </div>
     </div>
 
-    <!-- Carrusel -->
     <div class="relative">
-      <div
-        id="pf-track"
-        class="flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 -mx-2 px-2 scrollbar-hide"
-        style="scrollbar-width: none; -ms-overflow-style: none;"
-      >
+      <div id="pf-track" class="flex gap-5 overflow-x-auto snap-x snap-mandatory pb-4 -mx-2 px-2 scrollbar-hide cursor-grab active:cursor-grabbing select-none"
+        style="scrollbar-width: none; -ms-overflow-style: none;">
         {projects.map((p) => (
-          <article
-            class="pf-card snap-start shrink-0 w-[min(100%,320px)] sm:w-[340px] rounded-2xl border border-slate-800 bg-slate-900/70 overflow-hidden group hover:border-violet-500/40 transition-all duration-300 hover:shadow-xl hover:shadow-violet-500/10"
-            data-project={p.id}
-          >
-            <!-- Mock browser / preview -->
+          <article class="pf-card snap-start shrink-0 w-[min(100%,320px)] sm:w-[340px] rounded-2xl border border-slate-800 bg-slate-900/70 overflow-hidden group hover:border-cyan-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-cyan-500/15" data-project={p.id}>
             <div class="relative aspect-[16/10] overflow-hidden bg-slate-950">
-              <div class={`absolute inset-0 bg-gradient-to-br ${p.accent} opacity-90`}>
-                <!-- Patrón decorativo -->
-                <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(circle at 20% 30%, white 1px, transparent 1px), radial-gradient(circle at 80% 70%, white 1px, transparent 1px); background-size: 24px 24px;"></div>
-                <div class="absolute inset-0 flex flex-col justify-between p-4">
-                  <!-- Chrome falso -->
-                  <div class="flex items-center gap-1.5">
-                    <span class="w-2.5 h-2.5 rounded-full bg-white/30"></span>
-                    <span class="w-2.5 h-2.5 rounded-full bg-white/30"></span>
-                    <span class="w-2.5 h-2.5 rounded-full bg-white/30"></span>
-                    <span class="ml-2 flex-1 h-5 rounded-md bg-black/25 text-[10px] text-white/50 flex items-center px-2 truncate font-mono">
-                      kadmiel.cl/{p.title.toLowerCase().replace(/\s+/g, '-')}
-                    </span>
-                  </div>
-                  <div class="text-center pb-2">
-                    <p class="text-white/90 font-extrabold text-lg drop-shadow-md">{p.title}</p>
-                    <p class="text-white/60 text-xs mt-0.5">{p.category}</p>
-                  </div>
-                </div>
-              </div>
-              <!-- Badge score -->
-              <div class="absolute top-3 right-3 z-10 flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-950/80 border border-emerald-500/30 backdrop-blur-sm">
+              <img src={p.image} alt={`Captura de ${p.title}`}
+                class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                loading="lazy" width="800" height="500" />
+              <div class="absolute top-3 right-3 z-10 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-950/90 border border-emerald-500/40 shadow-lg backdrop-blur-sm">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span class="text-[11px] font-bold text-emerald-300 tabular-nums">{p.score}/100</span>
               </div>
             </div>
-
             <div class="p-5">
               <div class="flex flex-wrap gap-1.5 mb-3">
                 {p.tags.map((t) => (
-                  <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-800 text-slate-400 border border-slate-700/80">
-                    {t}
-                  </span>
+                  <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-800 text-slate-400 border border-slate-700/80">{t}</span>
                 ))}
               </div>
               <h3 class="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">{p.title}</h3>
+              <p class="text-[11px] text-slate-500 font-mono mt-0.5 truncate">{p.url.replace(/^https?:\/\//, '')}</p>
               <p class="mt-1.5 text-sm text-slate-400 leading-relaxed line-clamp-2">{p.description}</p>
-              {p.url && p.url !== '#' ? (
-                <a
-                  href={p.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
-                >
-                  Ver sitio
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                </a>
-              ) : (
-                <span class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500">
-                  Ejemplo de estilo · Reemplazar con URL real
-                </span>
-              )}
+              <a href={p.url} target="_blank" rel="noopener noreferrer"
+                class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-400 hover:text-cyan-300 transition-colors">
+                Ver sitio
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </a>
             </div>
           </article>
         ))}
       </div>
-
-      <!-- Gradientes laterales -->
-      <div class="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-slate-950 to-transparent hidden sm:block" aria-hidden="true"></div>
-      <div class="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-slate-950 to-transparent hidden sm:block" aria-hidden="true"></div>
     </div>
 
-    <!-- Dots -->
     <div class="flex justify-center gap-2 mt-6" id="pf-dots" role="tablist" aria-label="Proyectos">
       {projects.map((_, i) => (
-        <button
-          type="button"
-          class="pf-dot h-2 rounded-full transition-all duration-300 bg-slate-700 w-2"
-          data-index={i}
-          aria-label={`Ir al proyecto ${i + 1}`}
-        />
+        <button type="button" class="pf-dot h-2 rounded-full transition-all duration-300 bg-slate-700 w-2" data-index={i} aria-label={`Ir al proyecto ${i + 1}`} />
       ))}
     </div>
-
     <p class="mt-8 text-center text-xs text-slate-500">
       ¿Quieres ver tu marca aquí?{' '}
       <a href="#cotizador" class="text-cyan-400 hover:text-cyan-300 font-semibold">Cotiza tu proyecto</a>
@@ -196,8 +129,29 @@ const projects = [
 </section>
 
 <style>
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+  .pf-card {
+    animation: pfIn 0.5s ease-out both;
+  }
+  .pf-card:nth-child(1) { animation-delay: 0.05s; }
+  .pf-card:nth-child(2) { animation-delay: 0.1s; }
+  .pf-card:nth-child(3) { animation-delay: 0.15s; }
+  .pf-card:nth-child(4) { animation-delay: 0.2s; }
+  .pf-card:nth-child(5) { animation-delay: 0.25s; }
+
+  @keyframes pfIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  #pf-track {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pf-card { animation: none; }
   }
 </style>
 
@@ -207,77 +161,100 @@ const projects = [
   const nextBtn = document.getElementById('pf-next');
   const dots = document.querySelectorAll('.pf-dot');
 
-  if (!track) {
-    // no-op
-  } else {
+  if (track) {
     const cards = track.querySelectorAll('.pf-card');
-    const gap = 20; // gap-5 ≈ 1.25rem
+    const gap = 20;
 
     function cardWidth(): number {
       const first = cards[0] as HTMLElement | undefined;
       return first ? first.offsetWidth + gap : 340;
     }
-
     function currentIndex(): number {
-      const w = cardWidth();
-      return Math.round(track!.scrollLeft / w);
+      return Math.round(track!.scrollLeft / cardWidth());
     }
-
     function updateDots() {
       const idx = currentIndex();
       dots.forEach((d, i) => {
-        if (i === idx) {
-          d.className = 'pf-dot h-2 rounded-full transition-all duration-300 bg-cyan-400 w-6';
-        } else {
-          d.className = 'pf-dot h-2 rounded-full transition-all duration-300 bg-slate-700 w-2';
-        }
+        d.className = i === idx
+          ? 'pf-dot h-2 rounded-full transition-all duration-300 bg-cyan-400 w-6'
+          : 'pf-dot h-2 rounded-full transition-all duration-300 bg-slate-700 w-2';
       });
     }
-
     function scrollToIndex(i: number) {
-      const max = cards.length - 1;
-      const clamped = Math.max(0, Math.min(max, i));
+      const clamped = Math.max(0, Math.min(cards.length - 1, i));
       track!.scrollTo({ left: clamped * cardWidth(), behavior: 'smooth' });
     }
 
-    prevBtn?.addEventListener('click', () => scrollToIndex(currentIndex() - 1));
-    nextBtn?.addEventListener('click', () => scrollToIndex(currentIndex() + 1));
-
-    dots.forEach((d) => {
-      d.addEventListener('click', () => {
-        const i = parseInt(d.getAttribute('data-index') || '0', 10);
-        scrollToIndex(i);
-      });
-    });
-
-    track.addEventListener('scroll', () => {
-      window.requestAnimationFrame(updateDots);
-    }, { passive: true });
-
-    // Auto-avance suave cada 5s (pausa si el usuario interactúa)
-    let autoTimer: ReturnType<typeof setInterval> | null = null;
+    // --- Drag (mouse + touch via Pointer Events) ---
+    let isDown = false;
+    let startX = 0;
+    let startScroll = 0;
+    let moved = false;
     let userPaused = false;
 
-    function startAuto() {
-      if (autoTimer) clearInterval(autoTimer);
-      autoTimer = setInterval(() => {
-        if (userPaused) return;
-        const next = currentIndex() + 1;
-        if (next >= cards.length) scrollToIndex(0);
-        else scrollToIndex(next);
-      }, 5000);
-    }
-
-    function pauseAuto() {
+    track.addEventListener('pointerdown', (e: PointerEvent) => {
+      // solo botón primario / touch
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      isDown = true;
+      moved = false;
+      startX = e.clientX;
+      startScroll = track.scrollLeft;
+      track.setPointerCapture(e.pointerId);
+      track.classList.add('cursor-grabbing');
+      track.classList.remove('cursor-grab');
       userPaused = true;
+    });
+
+    track.addEventListener('pointermove', (e: PointerEvent) => {
+      if (!isDown) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 4) moved = true;
+      track.scrollLeft = startScroll - dx;
+      e.preventDefault();
+    });
+
+    function endDrag(e: PointerEvent) {
+      if (!isDown) return;
+      isDown = false;
+      track.classList.remove('cursor-grabbing');
+      track.classList.add('cursor-grab');
+      try { track.releasePointerCapture(e.pointerId); } catch {}
+      // snap a la card más cercana
+      scrollToIndex(currentIndex());
       setTimeout(() => { userPaused = false; }, 8000);
     }
 
-    prevBtn?.addEventListener('click', pauseAuto);
-    nextBtn?.addEventListener('click', pauseAuto);
-    track.addEventListener('pointerdown', pauseAuto);
-    track.addEventListener('touchstart', pauseAuto, { passive: true });
+    track.addEventListener('pointerup', endDrag);
+    track.addEventListener('pointercancel', endDrag);
 
+    // Evitar click en links si hubo drag
+    track.addEventListener('click', (e) => {
+      if (moved) {
+        e.preventDefault();
+        e.stopPropagation();
+        moved = false;
+      }
+    }, true);
+
+    prevBtn?.addEventListener('click', () => { userPaused = true; scrollToIndex(currentIndex() - 1); setTimeout(() => { userPaused = false; }, 8000); });
+    nextBtn?.addEventListener('click', () => { userPaused = true; scrollToIndex(currentIndex() + 1); setTimeout(() => { userPaused = false; }, 8000); });
+    dots.forEach((d) => d.addEventListener('click', () => {
+      userPaused = true;
+      scrollToIndex(parseInt(d.getAttribute('data-index') || '0', 10));
+      setTimeout(() => { userPaused = false; }, 8000);
+    }));
+
+    track.addEventListener('scroll', () => requestAnimationFrame(updateDots), { passive: true });
+
+    let autoTimer: ReturnType<typeof setInterval> | null = null;
+    function startAuto() {
+      if (autoTimer) clearInterval(autoTimer);
+      autoTimer = setInterval(() => {
+        if (userPaused || isDown) return;
+        const next = currentIndex() + 1;
+        scrollToIndex(next >= cards.length ? 0 : next);
+      }, 5000);
+    }
     updateDots();
     startAuto();
   }
