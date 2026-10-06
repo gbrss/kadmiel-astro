@@ -107,7 +107,7 @@
   const dots = document.querySelectorAll('.dot');
   const totalSlides = slides.length;
 
-  function updateSlide(index) {
+  function updateSlide(index: number) {
     slides.forEach((slide, i) => {
       if (i === index) {
         slide.classList.remove('hidden');
