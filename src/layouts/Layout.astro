@@ -20,8 +20,40 @@ const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 	</head>
-	<body class="bg-[#090d16] text-slate-100 font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-purple-500 selection:text-white">
+	<body class="page-fade bg-[#090d16] text-slate-100 font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-purple-500 selection:text-white">
 		<slot />
+		<script>
+			// Fade-in de página al cargar
+			document.body.classList.add('page-ready');
+
+			// Reveal al scroll para secciones y elementos
+			const targets = document.querySelectorAll(
+				'main > section, footer, .reveal, .stat-card, .pf-card, #ventajas > div > div > div, #comparativa table, #proceso .grid > div, #garantias .grid > div'
+			);
+
+			targets.forEach((el) => el.classList.add('fade-section'));
+
+			const io = new IntersectionObserver(
+				(entries) => {
+					entries.forEach((entry) => {
+						if (entry.isIntersecting) {
+							entry.target.classList.add('is-visible');
+							io.unobserve(entry.target);
+						}
+					});
+				},
+				{ threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+			);
+
+			document.querySelectorAll('.fade-section').forEach((el) => io.observe(el));
+
+			// Hero visible de inmediato
+			const hero = document.querySelector('main > section');
+			if (hero) {
+				hero.classList.add('is-visible');
+				io.unobserve(hero);
+			}
+		</script>
 	</body>
 </html>
 
@@ -38,5 +70,41 @@ const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS
 	}
 	::-webkit-scrollbar-thumb:hover {
 		background: #374151;
+	}
+
+	/* Carga de página */
+	.page-fade {
+		opacity: 0;
+		transition: opacity 0.6s ease;
+	}
+	.page-fade.page-ready {
+		opacity: 1;
+	}
+
+	/* Secciones / elementos al scroll */
+	.fade-section {
+		opacity: 0;
+		transform: translateY(28px);
+		transition:
+			opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+			transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	.fade-section.is-visible {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	/* Stagger opcional */
+	.fade-section:nth-child(2) { transition-delay: 0.05s; }
+	.fade-section:nth-child(3) { transition-delay: 0.1s; }
+	.fade-section:nth-child(4) { transition-delay: 0.15s; }
+
+	@media (prefers-reduced-motion: reduce) {
+		.page-fade,
+		.fade-section {
+			opacity: 1 !important;
+			transform: none !important;
+			transition: none !important;
+		}
 	}
 </style>
