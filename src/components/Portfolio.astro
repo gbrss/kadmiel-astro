@@ -162,7 +162,8 @@ const projects = [
   const dots = document.querySelectorAll('.pf-dot');
 
   if (track) {
-    const cards = track.querySelectorAll('.pf-card');
+    const el = track;
+    const cards = el.querySelectorAll('.pf-card');
     const gap = 20;
 
     function cardWidth(): number {
@@ -170,7 +171,7 @@ const projects = [
       return first ? first.offsetWidth + gap : 340;
     }
     function currentIndex(): number {
-      return Math.round(track!.scrollLeft / cardWidth());
+      return Math.round(el.scrollLeft / cardWidth());
     }
     function updateDots() {
       const idx = currentIndex();
@@ -182,7 +183,7 @@ const projects = [
     }
     function scrollToIndex(i: number) {
       const clamped = Math.max(0, Math.min(cards.length - 1, i));
-      track!.scrollTo({ left: clamped * cardWidth(), behavior: 'smooth' });
+      el.scrollTo({ left: clamped * cardWidth(), behavior: 'smooth' });
     }
 
     // --- Drag (mouse + touch via Pointer Events) ---
@@ -192,43 +193,42 @@ const projects = [
     let moved = false;
     let userPaused = false;
 
-    track.addEventListener('pointerdown', (e: PointerEvent) => {
+    el.addEventListener('pointerdown', (e: PointerEvent) => {
       // solo botón primario / touch
       if (e.button !== 0 && e.pointerType === 'mouse') return;
       isDown = true;
       moved = false;
       startX = e.clientX;
-      startScroll = track.scrollLeft;
-      track.setPointerCapture(e.pointerId);
-      track.classList.add('cursor-grabbing');
-      track.classList.remove('cursor-grab');
+      startScroll = el.scrollLeft;
+      el.setPointerCapture(e.pointerId);
+      el.classList.add('cursor-grabbing');
+      el.classList.remove('cursor-grab');
       userPaused = true;
     });
 
-    track.addEventListener('pointermove', (e: PointerEvent) => {
+    el.addEventListener('pointermove', (e: PointerEvent) => {
       if (!isDown) return;
       const dx = e.clientX - startX;
       if (Math.abs(dx) > 4) moved = true;
-      track.scrollLeft = startScroll - dx;
+      el.scrollLeft = startScroll - dx;
       e.preventDefault();
     });
 
     function endDrag(e: PointerEvent) {
       if (!isDown) return;
       isDown = false;
-      track.classList.remove('cursor-grabbing');
-      track.classList.add('cursor-grab');
-      try { track.releasePointerCapture(e.pointerId); } catch {}
-      // snap a la card más cercana
+      el.classList.remove('cursor-grabbing');
+      el.classList.add('cursor-grab');
+      try { el.releasePointerCapture(e.pointerId); } catch {}
       scrollToIndex(currentIndex());
       setTimeout(() => { userPaused = false; }, 8000);
     }
 
-    track.addEventListener('pointerup', endDrag);
-    track.addEventListener('pointercancel', endDrag);
+    el.addEventListener('pointerup', endDrag);
+    el.addEventListener('pointercancel', endDrag);
 
     // Evitar click en links si hubo drag
-    track.addEventListener('click', (e) => {
+    el.addEventListener('click', (e) => {
       if (moved) {
         e.preventDefault();
         e.stopPropagation();
@@ -244,7 +244,7 @@ const projects = [
       setTimeout(() => { userPaused = false; }, 8000);
     }));
 
-    track.addEventListener('scroll', () => requestAnimationFrame(updateDots), { passive: true });
+    el.addEventListener('scroll', () => requestAnimationFrame(updateDots), { passive: true });
 
     let autoTimer: ReturnType<typeof setInterval> | null = null;
     function startAuto() {
