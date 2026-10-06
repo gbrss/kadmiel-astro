@@ -1,0 +1,67 @@
+---
+const steps = [
+  {
+    num: '01',
+    title: 'Diagnóstico y cotización',
+    desc: 'Eliges el tipo de proyecto en la calculadora o nos escribes por WhatsApp. En menos de 24 h te confirmamos alcance y precio cerrado.',
+  },
+  {
+    num: '02',
+    title: 'Diseño y estructura',
+    desc: 'Definimos secciones, mensajes y prioridades de conversión. Tú apruebas antes de programar: cero sorpresas.',
+  },
+  {
+    num: '03',
+    title: 'Desarrollo con Astro',
+    desc: 'Construimos HTML estático ultrarrápido, SEO técnico, formularios y módulos que pediste. Optimizamos imágenes y Core Web Vitals.',
+  },
+  {
+    num: '04',
+    title: 'Entrega y soporte',
+    desc: 'Publicamos en tu dominio, te capacitamos y dejamos soporte post-entrega. Medimos PageSpeed real antes de cerrar.',
+  },
+];
+---
+
+<section id="proceso" class="py-24 bg-slate-950 border-t border-slate-800/80">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center max-w-3xl mx-auto mb-14">
+      <h2 class="text-xs font-bold text-cyan-400 tracking-widest uppercase mb-3">Proceso claro</h2>
+      <p class="text-3xl md:text-4xl font-extrabold text-white">De la idea al sitio online en 4 pasos</p>
+      <p class="mt-3 text-slate-400 text-base">Sin rodeos. Sabes qué pasa, cuándo y cuánto cuesta.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+      {steps.map((s, i) => (
+        <div class="relative rounded-2xl border border-slate-800 bg-slate-900/50 p-6 hover:border-violet-500/40 transition-colors">
+          <span class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-violet-500/40 to-cyan-500/30">{s.num}</span>
+          <h3 class="mt-3 text-lg font-bold text-white">{s.title}</h3>
+          <p class="mt-2 text-sm text-slate-400 leading-relaxed">{s.desc}</p>
+          {i < steps.length - 1 && (
+            <div class="hidden lg:block absolute top-1/2 -right-3 w-6 h-px bg-gradient-to-r from-violet-500/50 to-transparent" aria-hidden="true"></div>
+          )}
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a
+        href="#cotizador"
+        class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 text-white font-extrabold shadow-lg shadow-violet-600/30 hover:scale-[1.03] transition-all"
+      >
+        Empezar ahora — ver precios
+      </a>
+      <a
+        href="https://wa.me/56945422388?text=Hola!%20Quiero%20hablar%20sobre%20un%20proyecto%20web%20con%20Kadmiel"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 px-6 py-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 font-semibold hover:bg-emerald-500/20 transition-all"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+          <path d="M16.001 2.002c-7.713 0-13.975 6.262-13.975 13.975 0 2.465.643 4.868 1.865 6.99L2 30l7.2-1.886a13.92 13.92 0 006.801 1.735h.006c7.713 0 13.975-6.262 13.975-13.975S23.714 2.002 16.001 2.002zm0 25.54a11.54 11.54 0 01-5.88-1.605l-.421-.25-4.42 1.158 1.18-4.31-.274-.442a11.55 11.55 0 01-1.777-6.116c0-6.38 5.193-11.573 11.574-11.573 6.38 0 11.573 5.193 11.573 11.573 0 6.381-5.193 11.565-11.555 11.565z"/>
+        </svg>
+        Hablar por WhatsApp
+      </a>
+    </div>
+  </div>
+</section>

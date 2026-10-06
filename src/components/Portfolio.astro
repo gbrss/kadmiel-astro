@@ -1,0 +1,284 @@
+---
+/**
+ * Portafolio — carrusel de proyectos.
+ * Reemplaza title, category, url, score, description e image cuando tengas capturas reales.
+ * image: ruta en /public (ej. /portfolio/proyecto-1.webp) o URL externa.
+ */
+const projects = [
+  {
+    id: 1,
+    title: 'Clínica Dental Norte',
+    category: 'Sitio Corporativo',
+    url: '#',
+    score: 99,
+    description: 'Sitio multi-sección con agenda y SEO local. Carga bajo 0.7 s en móvil.',
+    accent: 'from-violet-500 to-indigo-500',
+    tags: ['Astro', 'SEO', 'Formularios'],
+  },
+  {
+    id: 2,
+    title: 'Moda Urbana Store',
+    category: 'Catálogo / Tienda',
+    url: '#',
+    score: 98,
+    description: 'Catálogo de productos con filtros y checkout por WhatsApp. 100 en Performance.',
+    accent: 'from-cyan-500 to-emerald-500',
+    tags: ['Catálogo', 'WhatsApp', 'Core Web Vitals'],
+  },
+  {
+    id: 3,
+    title: 'Launch SaaS Pro',
+    category: 'Landing Page',
+    url: '#',
+    score: 100,
+    description: 'Landing de conversión para lanzamiento de producto. A/B ready y ultraligera.',
+    accent: 'from-fuchsia-500 to-violet-500',
+    tags: ['Landing', 'Conversión', 'Astro'],
+  },
+  {
+    id: 4,
+    title: 'RestoBar Pacífico',
+    category: 'Landing + Redes',
+    url: '#',
+    score: 97,
+    description: 'Carta digital, reservas y presencia en redes. Diseño oscuro y menú rápido.',
+    accent: 'from-amber-500 to-orange-500',
+    tags: ['Landing', 'Menú', 'Local'],
+  },
+  {
+    id: 5,
+    title: 'Inmobiliaria Andes',
+    category: 'Sitio Corporativo',
+    url: '#',
+    score: 99,
+    description: 'Fichas de propiedades, filtros y contacto directo. Indexación rápida en Google.',
+    accent: 'from-sky-500 to-blue-600',
+    tags: ['Corporativo', 'Filtros', 'SEO'],
+  },
+  {
+    id: 6,
+    title: 'FitStudio Online',
+    category: 'Landing Page',
+    url: '#',
+    score: 100,
+    description: 'Captación de leads para clases online. Formulario + chatbot de WhatsApp.',
+    accent: 'from-rose-500 to-pink-500',
+    tags: ['Leads', 'Chatbot', 'Mobile-first'],
+  },
+];
+---
+
+<section id="portafolio" class="py-24 bg-slate-950 border-t border-slate-800/80 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+      <div class="max-w-2xl">
+        <h2 class="text-xs font-bold text-cyan-400 tracking-widest uppercase mb-3">Portafolio</h2>
+        <p class="text-3xl md:text-4xl font-extrabold text-white leading-tight">
+          Sitios reales. Resultados medibles.
+        </p>
+        <p class="mt-3 text-slate-400 text-base">
+          Cada proyecto se entrega con foco en velocidad, SEO y conversión. Desliza para ver ejemplos del estilo de trabajo Kadmiel.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button
+          type="button"
+          id="pf-prev"
+          aria-label="Proyecto anterior"
+          class="w-11 h-11 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 hover:border-cyan-500/50 hover:text-white transition-colors flex items-center justify-center"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button
+          type="button"
+          id="pf-next"
+          aria-label="Proyecto siguiente"
+          class="w-11 h-11 rounded-xl border border-slate-700 bg-slate-900 text-slate-300 hover:border-cyan-500/50 hover:text-white transition-colors flex items-center justify-center"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Carrusel -->
+    <div class="relative">
+      <div
+        id="pf-track"
+        class="flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 -mx-2 px-2 scrollbar-hide"
+        style="scrollbar-width: none; -ms-overflow-style: none;"
+      >
+        {projects.map((p) => (
+          <article
+            class="pf-card snap-start shrink-0 w-[min(100%,320px)] sm:w-[340px] rounded-2xl border border-slate-800 bg-slate-900/70 overflow-hidden group hover:border-violet-500/40 transition-all duration-300 hover:shadow-xl hover:shadow-violet-500/10"
+            data-project={p.id}
+          >
+            <!-- Mock browser / preview -->
+            <div class="relative aspect-[16/10] overflow-hidden bg-slate-950">
+              <div class={`absolute inset-0 bg-gradient-to-br ${p.accent} opacity-90`}>
+                <!-- Patrón decorativo -->
+                <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(circle at 20% 30%, white 1px, transparent 1px), radial-gradient(circle at 80% 70%, white 1px, transparent 1px); background-size: 24px 24px;"></div>
+                <div class="absolute inset-0 flex flex-col justify-between p-4">
+                  <!-- Chrome falso -->
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-white/30"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-white/30"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-white/30"></span>
+                    <span class="ml-2 flex-1 h-5 rounded-md bg-black/25 text-[10px] text-white/50 flex items-center px-2 truncate font-mono">
+                      kadmiel.cl/{p.title.toLowerCase().replace(/\s+/g, '-')}
+                    </span>
+                  </div>
+                  <div class="text-center pb-2">
+                    <p class="text-white/90 font-extrabold text-lg drop-shadow-md">{p.title}</p>
+                    <p class="text-white/60 text-xs mt-0.5">{p.category}</p>
+                  </div>
+                </div>
+              </div>
+              <!-- Badge score -->
+              <div class="absolute top-3 right-3 z-10 flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-950/80 border border-emerald-500/30 backdrop-blur-sm">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-[11px] font-bold text-emerald-300 tabular-nums">{p.score}/100</span>
+              </div>
+            </div>
+
+            <div class="p-5">
+              <div class="flex flex-wrap gap-1.5 mb-3">
+                {p.tags.map((t) => (
+                  <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-800 text-slate-400 border border-slate-700/80">
+                    {t}
+                  </span>
+                ))}
+              </div>
+              <h3 class="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">{p.title}</h3>
+              <p class="mt-1.5 text-sm text-slate-400 leading-relaxed line-clamp-2">{p.description}</p>
+              {p.url && p.url !== '#' ? (
+                <a
+                  href={p.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+                >
+                  Ver sitio
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </a>
+              ) : (
+                <span class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500">
+                  Ejemplo de estilo · Reemplazar con URL real
+                </span>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <!-- Gradientes laterales -->
+      <div class="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-slate-950 to-transparent hidden sm:block" aria-hidden="true"></div>
+      <div class="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-slate-950 to-transparent hidden sm:block" aria-hidden="true"></div>
+    </div>
+
+    <!-- Dots -->
+    <div class="flex justify-center gap-2 mt-6" id="pf-dots" role="tablist" aria-label="Proyectos">
+      {projects.map((_, i) => (
+        <button
+          type="button"
+          class="pf-dot h-2 rounded-full transition-all duration-300 bg-slate-700 w-2"
+          data-index={i}
+          aria-label={`Ir al proyecto ${i + 1}`}
+        />
+      ))}
+    </div>
+
+    <p class="mt-8 text-center text-xs text-slate-500">
+      ¿Quieres ver tu marca aquí?{' '}
+      <a href="#cotizador" class="text-cyan-400 hover:text-cyan-300 font-semibold">Cotiza tu proyecto</a>
+      {' '}o escríbenos por WhatsApp.
+    </p>
+  </div>
+</section>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+</style>
+
+<script>
+  const track = document.getElementById('pf-track') as HTMLElement | null;
+  const prevBtn = document.getElementById('pf-prev');
+  const nextBtn = document.getElementById('pf-next');
+  const dots = document.querySelectorAll('.pf-dot');
+
+  if (!track) {
+    // no-op
+  } else {
+    const cards = track.querySelectorAll('.pf-card');
+    const gap = 20; // gap-5 ≈ 1.25rem
+
+    function cardWidth(): number {
+      const first = cards[0] as HTMLElement | undefined;
+      return first ? first.offsetWidth + gap : 340;
+    }
+
+    function currentIndex(): number {
+      const w = cardWidth();
+      return Math.round(track!.scrollLeft / w);
+    }
+
+    function updateDots() {
+      const idx = currentIndex();
+      dots.forEach((d, i) => {
+        if (i === idx) {
+          d.className = 'pf-dot h-2 rounded-full transition-all duration-300 bg-cyan-400 w-6';
+        } else {
+          d.className = 'pf-dot h-2 rounded-full transition-all duration-300 bg-slate-700 w-2';
+        }
+      });
+    }
+
+    function scrollToIndex(i: number) {
+      const max = cards.length - 1;
+      const clamped = Math.max(0, Math.min(max, i));
+      track!.scrollTo({ left: clamped * cardWidth(), behavior: 'smooth' });
+    }
+
+    prevBtn?.addEventListener('click', () => scrollToIndex(currentIndex() - 1));
+    nextBtn?.addEventListener('click', () => scrollToIndex(currentIndex() + 1));
+
+    dots.forEach((d) => {
+      d.addEventListener('click', () => {
+        const i = parseInt(d.getAttribute('data-index') || '0', 10);
+        scrollToIndex(i);
+      });
+    });
+
+    track.addEventListener('scroll', () => {
+      window.requestAnimationFrame(updateDots);
+    }, { passive: true });
+
+    // Auto-avance suave cada 5s (pausa si el usuario interactúa)
+    let autoTimer: ReturnType<typeof setInterval> | null = null;
+    let userPaused = false;
+
+    function startAuto() {
+      if (autoTimer) clearInterval(autoTimer);
+      autoTimer = setInterval(() => {
+        if (userPaused) return;
+        const next = currentIndex() + 1;
+        if (next >= cards.length) scrollToIndex(0);
+        else scrollToIndex(next);
+      }, 5000);
+    }
+
+    function pauseAuto() {
+      userPaused = true;
+      setTimeout(() => { userPaused = false; }, 8000);
+    }
+
+    prevBtn?.addEventListener('click', pauseAuto);
+    nextBtn?.addEventListener('click', pauseAuto);
+    track.addEventListener('pointerdown', pauseAuto);
+    track.addEventListener('touchstart', pauseAuto, { passive: true });
+
+    updateDots();
+    startAuto();
+  }
+</script>

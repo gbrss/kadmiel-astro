@@ -1,0 +1,69 @@
+---
+const guarantees = [
+  {
+    icon: '⚡',
+    title: 'Velocidad real',
+    desc: 'Apuntamos a 95–100 en PageSpeed. Si no llega al estándar acordado, optimizamos sin costo extra hasta lograrlo.',
+  },
+  {
+    icon: '💰',
+    title: 'Precio cerrado',
+    desc: 'Lo que ves en la calculadora es la base. Te enviamos propuesta clara por WhatsApp: sin letras chicas ni cobros sorpresa.',
+  },
+  {
+    icon: '🛡️',
+    title: 'Sitio seguro y estable',
+    desc: 'Arquitectura estática: sin base de datos expuesta ni plugins vulnerables. Menos riesgos, menos mantención.',
+  },
+  {
+    icon: '🤝',
+    title: 'Soporte post-entrega',
+    desc: 'Te dejamos el sitio publicado, con instrucciones y un período de ajustes incluidos para que quedes conforme.',
+  },
+];
+---
+
+<section id="garantias" class="py-24 bg-[#090d16] border-t border-slate-800/80">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center max-w-3xl mx-auto mb-14">
+      <h2 class="text-xs font-bold text-emerald-400 tracking-widest uppercase mb-3">Compromiso Kadmiel</h2>
+      <p class="text-3xl md:text-4xl font-extrabold text-white">Trabajamos para que decidas con tranquilidad</p>
+      <p class="mt-3 text-slate-400 text-base">Menos fricción, más claridad. Así cerramos proyectos que sí generan resultados.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-14">
+      {guarantees.map((g) => (
+        <div class="flex gap-4 rounded-2xl border border-slate-800 bg-slate-900/50 p-6 hover:border-emerald-500/30 transition-colors">
+          <div class="text-3xl shrink-0" aria-hidden="true">{g.icon}</div>
+          <div>
+            <h3 class="text-lg font-bold text-white">{g.title}</h3>
+            <p class="mt-1.5 text-sm text-slate-400 leading-relaxed">{g.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- CTA final fuerte -->
+    <div class="relative overflow-hidden rounded-3xl border border-violet-500/30 bg-gradient-to-br from-violet-600/20 via-slate-900 to-cyan-600/15 p-8 md:p-12 text-center">
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(139,92,246,0.15),_transparent_60%)] pointer-events-none"></div>
+      <div class="relative z-10 max-w-2xl mx-auto">
+        <p class="text-xs font-bold text-cyan-300 uppercase tracking-widest mb-3">Siguiente paso</p>
+        <h3 class="text-2xl md:text-3xl font-extrabold text-white leading-tight">
+          Calcula tu inversión en 30 segundos y escríbenos con el detalle listo
+        </h3>
+        <p class="mt-3 text-slate-300 text-sm md:text-base">
+          Sin formularios eternos. Eliges opciones → total en CLP → mensaje a WhatsApp con el resumen.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a
+            href="#cotizador"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 text-white font-extrabold text-base shadow-xl shadow-violet-600/30 hover:scale-[1.03] transition-all"
+          >
+            Ir a la calculadora
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
