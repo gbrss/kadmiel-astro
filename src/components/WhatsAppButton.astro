@@ -1,0 +1,84 @@
+---
+const phone = '+56945422388';
+const message = encodeURIComponent('Hola! Me gustaría conocer más sobre sus servicios.');
+const waUrl = `https://wa.me/${phone}?text=${message}`;
+---
+
+<a
+  href={waUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Contactar por WhatsApp"
+  class="whatsapp-float"
+>
+  <span class="whatsapp-pulse"></span>
+  <span class="whatsapp-pulse whatsapp-pulse-delay"></span>
+  <svg class="whatsapp-icon" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+    <path d="M16.001 2.002c-7.713 0-13.975 6.262-13.975 13.975 0 2.465.643 4.868 1.865 6.99L2 30l7.2-1.886a13.92 13.92 0 006.801 1.735h.006c7.713 0 13.975-6.262 13.975-13.975S23.714 2.002 16.001 2.002zm0 25.54a11.54 11.54 0 01-5.88-1.605l-.421-.25-4.42 1.158 1.18-4.31-.274-.442a11.55 11.55 0 01-1.777-6.116c0-6.38 5.193-11.573 11.574-11.573 6.38 0 11.573 5.193 11.573 11.573 0 6.381-5.193 11.565-11.555 11.565zm6.352-8.666c-.348-.174-2.06-1.016-2.38-1.132-.32-.116-.553-.174-.786.174-.233.348-.902 1.132-1.105 1.365-.203.233-.406.262-.754.087-.348-.174-1.47-.542-2.8-1.727-1.035-.923-1.734-2.062-1.937-2.41-.203-.348-.022-.536.152-.71.156-.155.348-.406.522-.61.174-.203.233-.348.348-.58.116-.233.058-.436-.029-.61-.087-.174-.786-1.894-1.077-2.595-.283-.68-.57-.588-.786-.6-.203-.01-.436-.012-.669-.012s-.61.087-.93.436c-.32.348-1.22 1.192-1.22 2.906s1.25 3.37 1.423 3.603c.174.233 2.46 3.757 5.96 5.267 2.21.953 3.077.87 3.64.813.552-.058 2.06-.842 2.35-1.655.29-.813.29-1.51.203-1.655-.087-.145-.32-.233-.669-.406z"/>
+  </svg>
+</a>
+
+<style>
+  .whatsapp-float {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    width: 3.75rem;
+    height: 3.75rem;
+    background: #25d366;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.45);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    text-decoration: none;
+  }
+
+  .whatsapp-float:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 28px rgba(37, 211, 102, 0.55);
+  }
+
+  .whatsapp-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .whatsapp-pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: #25d366;
+    animation: wa-pulse 2s ease-out infinite;
+    z-index: 1;
+  }
+
+  .whatsapp-pulse-delay {
+    animation-delay: 1s;
+  }
+
+  @keyframes wa-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    100% {
+      transform: scale(1.8);
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .whatsapp-float {
+      bottom: 1.25rem;
+      right: 1.25rem;
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+  }
+</style>
