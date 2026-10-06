@@ -64,7 +64,7 @@ const painPoints = [
   <div class="max-w-7xl mx-auto px-6">
     <!-- Stats bar -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-16" id="stats-grid">
-      {stats.map((s, i) => (
+      {stats.map((s) => (
         <div
           class={`stat-card group relative rounded-2xl border border-slate-800/80 bg-slate-900/60 px-5 py-7 text-center backdrop-blur-sm overflow-hidden transition-all duration-500 hover:border-violet-500/40 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-violet-500/10`}
           style={`animation-delay: ${s.delay}ms`}
