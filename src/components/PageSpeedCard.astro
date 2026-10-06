@@ -1,0 +1,526 @@
+---
+/**
+ * Tarjeta "Puntaje Google PageSpeed Insights"
+ *
+ * Efectos visuales:
+ *  - Medidor circular que se llena y cuenta de 0 al puntaje al entrar en pantalla.
+ *  - Marcas (ticks) que se encienden a medida que sube el puntaje.
+ *  - Gráfico de línea que se desplaza en tiempo real (tiempo de respuesta en ms).
+ *  - Métricas (FCP, LCP, TBT, CLS) con pequeñas variaciones y barra de margen.
+ *  - Barrido de "análisis" periódico sobre la tarjeta.
+ *
+ * Nota: los datos en movimiento son una simulación visual, no una medición real.
+ * Respeta prefers-reduced-motion y pausa las animaciones cuando no está visible.
+ */
+interface Props {
+  score?: number;
+}
+
+const { score = 100 } = Astro.props;
+
+const R = 80;
+const CIRC = Number((2 * Math.PI * R).toFixed(2));
+
+const TICKS = 60;
+const ticks = Array.from({ length: TICKS }, (_, i) => {
+  const angle = (i / TICKS) * Math.PI * 2 - Math.PI / 2;
+  const long = i % 5 === 0;
+  const r1 = long ? 87 : 89;
+  const r2 = 93;
+  return {
+    x1: (100 + Math.cos(angle) * r1).toFixed(2),
+    y1: (100 + Math.sin(angle) * r1).toFixed(2),
+    x2: (100 + Math.cos(angle) * r2).toFixed(2),
+    y2: (100 + Math.sin(angle) * r2).toFixed(2),
+    long,
+  };
+});
+
+// Color según el puntaje (verde / ámbar / rojo), igual que PageSpeed
+const tone =
+  score >= 90
+    ? { a: '#34d399', b: '#22d3ee', text: 'text-emerald-400', soft: 'text-emerald-300' }
+    : score >= 50
+      ? { a: '#fbbf24', b: '#f97316', text: 'text-amber-400', soft: 'text-amber-300' }
+      : { a: '#fb7185', b: '#f43f5e', text: 'text-rose-400', soft: 'text-rose-300' };
+
+const metrics = [
+  { key: 'fcp', label: 'FCP (Primer Render)', value: '0.30s', margin: 83, hint: 'Umbral "bueno" de Google: hasta 1.8 s' },
+  { key: 'lcp', label: 'LCP (Carga Mayor)', value: '0.60s', margin: 76, hint: 'Umbral "bueno" de Google: hasta 2.5 s' },
+  { key: 'tbt', label: 'TBT (Bloqueo)', value: '0ms', margin: 100, hint: 'Umbral "bueno" de Google: hasta 200 ms' },
+  { key: 'cls', label: 'CLS (Estabilidad)', value: '0.00', margin: 100, hint: 'Umbral "bueno" de Google: hasta 0.1' },
+];
+---
+
+<div
+  id="psi-card"
+  class="psi-card relative bg-slate-900/90 border border-violet-500/30 rounded-3xl p-8 backdrop-blur-2xl shadow-2xl overflow-hidden"
+  data-score={score}
+  data-circ={CIRC}
+  style={`--psi-a: ${tone.a}; --psi-b: ${tone.b};`}
+>
+  <!-- Barrido de análisis -->
+  <div class="psi-sweep pointer-events-none absolute inset-0" aria-hidden="true"></div>
+
+  <!-- Insignia -->
+  <div class="absolute -top-0 right-0 bg-emerald-500 text-slate-950 font-black text-xs px-4 py-1.5 rounded-bl-2xl shadow-lg">
+    Google Verified
+  </div>
+
+  <!-- Encabezado -->
+  <div class="flex items-center justify-center gap-3 mb-6 mt-2">
+    <span class="relative flex h-2.5 w-2.5" aria-hidden="true">
+      <span class="psi-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+      <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+    </span>
+    <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest text-center">
+      Puntaje Google PageSpeed Insights
+    </h2>
+  </div>
+
+  <!-- Medidor circular -->
+  <div class="flex justify-center mb-6">
+    <div class="relative w-52 h-52" role="img" aria-label={`Puntaje de rendimiento: ${score} de 100`}>
+      <svg viewBox="0 0 200 200" class="w-full h-full" aria-hidden="true">
+        <defs>
+          <linearGradient id="psi-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color: var(--psi-a)"></stop>
+            <stop offset="100%" style="stop-color: var(--psi-b)"></stop>
+          </linearGradient>
+          <filter id="psi-glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="3.5" result="blur"></feGaussianBlur>
+            <feMerge>
+              <feMergeNode in="blur"></feMergeNode>
+              <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- Anillo exterior giratorio -->
+        <circle class="psi-orbit" cx="100" cy="100" r="98" fill="none" stroke="var(--psi-a)" stroke-opacity="0.35" stroke-width="1" stroke-dasharray="3 9" stroke-linecap="round"></circle>
+
+        <!-- Marcas -->
+        {ticks.map((t) => (
+          <line data-tick class={`psi-tick ${t.long ? 'long' : ''}`} x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2}></line>
+        ))}
+
+        <!-- Pista -->
+        <circle cx="100" cy="100" r={R} fill="none" stroke="var(--psi-a)" stroke-opacity="0.12" stroke-width="12"></circle>
+
+        <!-- Progreso -->
+        <circle
+          data-arc
+          cx="100"
+          cy="100"
+          r={R}
+          fill="none"
+          stroke="url(#psi-grad)"
+          stroke-width="12"
+          stroke-linecap="round"
+          stroke-dasharray={CIRC}
+          stroke-dashoffset={CIRC}
+          transform="rotate(-90 100 100)"
+          filter="url(#psi-glow)"
+        ></circle>
+      </svg>
+
+      <div class="absolute inset-0 flex flex-col items-center justify-center">
+        <span data-score-num class={`text-6xl font-black tabular-nums ${tone.text}`}>0</span>
+        <span class={`text-[10px] font-bold tracking-[0.25em] uppercase ${tone.soft}`}>Performance</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico en vivo -->
+  <div class="mb-6 rounded-2xl bg-slate-950/60 border border-slate-800 p-4">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Tiempo de respuesta</span>
+      <span class="text-xs font-bold text-cyan-300 tabular-nums"><span data-live-ms>--</span> ms</span>
+    </div>
+
+    <svg viewBox="0 0 300 80" class="w-full h-auto block" aria-hidden="true">
+      <defs>
+        <linearGradient id="psi-area" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.35"></stop>
+          <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"></stop>
+        </linearGradient>
+        <linearGradient id="psi-line" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.2"></stop>
+          <stop offset="60%" stop-color="#22d3ee"></stop>
+          <stop offset="100%" stop-color="#34d399"></stop>
+        </linearGradient>
+        <clipPath id="psi-clip">
+          <rect x="0" y="0" width="300" height="80"></rect>
+        </clipPath>
+      </defs>
+
+      <g stroke="#1e293b" stroke-width="1" stroke-dasharray="3 4">
+        <line x1="0" y1="20" x2="300" y2="20"></line>
+        <line x1="0" y1="40" x2="300" y2="40"></line>
+        <line x1="0" y1="60" x2="300" y2="60"></line>
+      </g>
+
+      <g clip-path="url(#psi-clip)">
+        <path data-chart-area d="" fill="url(#psi-area)"></path>
+        <path data-chart-line d="" fill="none" stroke="url(#psi-line)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+      </g>
+
+      <circle data-chart-halo cx="300" cy="40" r="6" fill="#34d399" fill-opacity="0.25" class="psi-halo"></circle>
+      <circle data-chart-dot cx="300" cy="40" r="3" fill="#34d399"></circle>
+    </svg>
+  </div>
+
+  <!-- Métricas -->
+  <div class="grid grid-cols-2 gap-4 text-center">
+    {metrics.map((m) => (
+      <div class="bg-slate-800/60 p-4 rounded-2xl border border-slate-800" data-metric={m.key} title={m.hint}>
+        <p class="text-xs text-slate-400">{m.label}</p>
+        <p data-metric-val class={`text-xl font-bold mt-1 tabular-nums ${tone.text}`}>{m.value}</p>
+        <div class="h-1 rounded-full bg-slate-700/70 mt-3 overflow-hidden">
+          <div
+            data-metric-bar
+            class="h-full rounded-full transition-all duration-700 ease-out"
+            style={`width: ${m.margin}%; background: linear-gradient(90deg, var(--psi-a), var(--psi-b));`}
+          ></div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Estado -->
+  <div class="mt-5 flex items-center justify-center gap-2 text-[11px] text-slate-500">
+    <span data-status-dot class="psi-status-dot inline-block h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+    <span data-status>Monitoreo activo</span>
+  </div>
+</div>
+
+<script>
+  const card = document.getElementById('psi-card');
+  if (card) initPsiCard(card);
+
+  function initPsiCard(card: HTMLElement) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const target = Number(card.dataset.score ?? 100);
+    const circ = Number(card.dataset.circ ?? 0);
+
+    const arc = card.querySelector<SVGCircleElement>('[data-arc]');
+    const scoreNum = card.querySelector<HTMLElement>('[data-score-num]');
+    const ticks = card.querySelectorAll<SVGLineElement>('[data-tick]');
+    const chartLine = card.querySelector<SVGPathElement>('[data-chart-line]');
+    const chartArea = card.querySelector<SVGPathElement>('[data-chart-area]');
+    const chartDot = card.querySelector<SVGCircleElement>('[data-chart-dot]');
+    const chartHalo = card.querySelector<SVGCircleElement>('[data-chart-halo]');
+    const liveMs = card.querySelector<HTMLElement>('[data-live-ms]');
+    const statusEl = card.querySelector<HTMLElement>('[data-status]');
+    const metricEls = card.querySelectorAll<HTMLElement>('[data-metric]');
+
+    if (!arc || !scoreNum || !chartLine || !chartArea || !chartDot || !chartHalo) return;
+
+    /* ---------- Medidor circular ---------- */
+    function setProgress(p: number) {
+      const value = target * p;
+      arc!.style.strokeDashoffset = String(circ * (1 - value / 100));
+      scoreNum!.textContent = String(Math.round(value));
+      const lit = Math.round((value / 100) * ticks.length);
+      ticks.forEach((tick, i) => tick.classList.toggle('on', i < lit));
+    }
+
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    function animateGauge(duration = 1900) {
+      const start = performance.now();
+      const step = (now: number) => {
+        const t = Math.min((now - start) / duration, 1);
+        setProgress(easeOutCubic(t));
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+
+    /* ---------- Gráfico en vivo ---------- */
+    const W = 300;
+    const H = 80;
+    const N = 40; // puntos visibles
+    const dx = W / (N - 1);
+    const SPEED = 1.2; // puntos por segundo
+
+    let seed = 0;
+    const sample = (i: number) =>
+      28 +
+      9 * Math.sin(i * 0.35) +
+      5 * Math.sin(i * 0.9 + 1) +
+      (Math.random() - 0.5) * 8 +
+      (Math.random() < 0.04 ? 14 : 0);
+
+    const buf: number[] = [];
+    for (let i = 0; i <= N; i++) buf.push(sample(seed++));
+
+    const yOf = (v: number) => H - 8 - (Math.min(Math.max(v, 0), 80) / 80) * (H - 16);
+
+    let phase = 0;
+
+    function draw() {
+      const pts: Array<[number, number]> = [];
+      for (let i = 0; i < N; i++) pts.push([(i - phase) * dx, yOf(buf[i])]);
+
+      const headValue = buf[N - 1] + (buf[N] - buf[N - 1]) * phase;
+      const headY = yOf(headValue);
+      pts.push([W, headY]);
+
+      let d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+      for (let i = 1; i < pts.length - 1; i++) {
+        const mx = (pts[i][0] + pts[i + 1][0]) / 2;
+        const my = (pts[i][1] + pts[i + 1][1]) / 2;
+        d += ` Q${pts[i][0].toFixed(1)},${pts[i][1].toFixed(1)} ${mx.toFixed(1)},${my.toFixed(1)}`;
+      }
+      const last = pts[pts.length - 1];
+      d += ` L${last[0].toFixed(1)},${last[1].toFixed(1)}`;
+
+      chartLine!.setAttribute('d', d);
+      chartArea!.setAttribute('d', `${d} L${W},${H} L${pts[0][0].toFixed(1)},${H} Z`);
+
+      chartDot!.setAttribute('cy', headY.toFixed(1));
+      chartHalo!.setAttribute('cy', headY.toFixed(1));
+      return headValue;
+    }
+
+    let lastReadout = 0;
+    function updateReadout(value: number, now: number) {
+      if (!liveMs || now - lastReadout < 300) return;
+      lastReadout = now;
+      liveMs.textContent = String(Math.round(value));
+    }
+
+    let raf = 0;
+    let lastFrame = 0;
+    function frame(now: number) {
+      const dt = Math.min((now - lastFrame) / 1000, 0.1);
+      lastFrame = now;
+      phase += dt * SPEED;
+      while (phase >= 1) {
+        phase -= 1;
+        buf.shift();
+        buf.push(sample(seed++));
+      }
+      updateReadout(draw(), now);
+      raf = requestAnimationFrame(frame);
+    }
+
+    /* ---------- Métricas con variación ---------- */
+    const metricConfig: Record<string, { base: number; spread: number; decimals: number; suffix: string; threshold: number }> = {
+      fcp: { base: 0.3, spread: 0.04, decimals: 2, suffix: 's', threshold: 1.8 },
+      lcp: { base: 0.6, spread: 0.06, decimals: 2, suffix: 's', threshold: 2.5 },
+      tbt: { base: 0, spread: 0, decimals: 0, suffix: 'ms', threshold: 200 },
+      cls: { base: 0, spread: 0, decimals: 2, suffix: '', threshold: 0.1 },
+    };
+
+    function jitterMetrics() {
+      metricEls.forEach((el) => {
+        const cfg = metricConfig[el.dataset.metric ?? ''];
+        if (!cfg || cfg.spread === 0) return;
+
+        const value = cfg.base + (Math.random() * 2 - 1) * cfg.spread;
+        const valEl = el.querySelector<HTMLElement>('[data-metric-val]');
+        const barEl = el.querySelector<HTMLElement>('[data-metric-bar]');
+
+        if (valEl) {
+          valEl.textContent = `${value.toFixed(cfg.decimals)}${cfg.suffix}`;
+          valEl.classList.remove('flash');
+          void valEl.offsetWidth; // reinicia la animación
+          valEl.classList.add('flash');
+        }
+        if (barEl) {
+          const margin = Math.max(0, (1 - value / cfg.threshold) * 100);
+          barEl.style.width = `${margin.toFixed(1)}%`;
+        }
+      });
+    }
+
+    /* ---------- Estado / barrido de análisis ---------- */
+    let tick = 0;
+    let scanTimer = 0;
+    function runScan() {
+      if (!statusEl) return;
+      card.classList.add('is-scanning');
+      statusEl.textContent = 'Analizando…';
+      window.clearTimeout(scanTimer);
+      scanTimer = window.setTimeout(() => {
+        card.classList.remove('is-scanning');
+        statusEl.textContent = 'Monitoreo activo';
+      }, 1600);
+    }
+
+    let metricTimer = 0;
+    let statusTimer = 0;
+
+    function start() {
+      if (raf) return;
+      lastFrame = performance.now();
+      raf = requestAnimationFrame(frame);
+      metricTimer = window.setInterval(jitterMetrics, 1600);
+      statusTimer = window.setInterval(() => {
+        tick += 1;
+        if (tick % 9 === 0) runScan();
+      }, 1000);
+    }
+
+    function stop() {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      window.clearInterval(metricTimer);
+      window.clearInterval(statusTimer);
+      window.clearTimeout(scanTimer);
+      card.classList.remove('is-scanning');
+      if (statusEl) statusEl.textContent = 'Monitoreo activo';
+    }
+
+    /* ---------- Arranque ---------- */
+    if (reduceMotion) {
+      setProgress(1);
+      updateReadout(draw(), performance.now() + 1000);
+      return;
+    }
+
+    let introDone = false;
+    let visible = false;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        visible = entries[0]?.isIntersecting ?? false;
+        if (visible) {
+          if (!introDone) {
+            introDone = true;
+            animateGauge();
+            window.setTimeout(runScan, 2000);
+          }
+          if (!document.hidden) start();
+        } else {
+          stop();
+        }
+      },
+      { threshold: 0.3 },
+    );
+    observer.observe(card);
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stop();
+      else if (visible) start();
+    });
+  }
+</script>
+
+<style>
+  /* Marcas del medidor */
+  .psi-tick {
+    stroke: #334155;
+    stroke-width: 1;
+    stroke-linecap: round;
+    transition: stroke 0.25s ease, stroke-width 0.25s ease;
+  }
+  .psi-tick.long {
+    stroke-width: 1.6;
+  }
+  .psi-tick.on {
+    stroke: var(--psi-a);
+  }
+
+  /* Anillo exterior giratorio */
+  .psi-orbit {
+    transform-origin: 100px 100px;
+    animation: psi-spin 30s linear infinite;
+  }
+  @keyframes psi-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Halo del punto del gráfico */
+  .psi-halo {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: psi-halo 1.6s ease-out infinite;
+  }
+  @keyframes psi-halo {
+    0% {
+      transform: scale(0.6);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(2.2);
+      opacity: 0;
+    }
+  }
+
+  /* Indicador "en vivo" */
+  .psi-ping {
+    animation: psi-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  @keyframes psi-ping {
+    75%,
+    100% {
+      transform: scale(2.4);
+      opacity: 0;
+    }
+  }
+
+  /* Destello al cambiar una métrica */
+  .flash {
+    animation: psi-flash 0.9s ease-out;
+  }
+  @keyframes psi-flash {
+    0% {
+      filter: brightness(1.8);
+      transform: translateY(-1px);
+    }
+    100% {
+      filter: brightness(1);
+      transform: translateY(0);
+    }
+  }
+
+  /* Barrido de análisis */
+  .psi-sweep {
+    opacity: 0;
+    background: linear-gradient(
+      100deg,
+      transparent 35%,
+      rgba(34, 211, 238, 0.1) 47%,
+      rgba(139, 92, 246, 0.16) 50%,
+      rgba(34, 211, 238, 0.1) 53%,
+      transparent 65%
+    );
+    transform: translateX(-100%);
+  }
+  .psi-card.is-scanning .psi-sweep {
+    opacity: 1;
+    animation: psi-sweep 1.6s ease-in-out;
+  }
+  @keyframes psi-sweep {
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  .psi-card.is-scanning .psi-status-dot {
+    background-color: #22d3ee;
+    animation: psi-blink 0.5s ease-in-out infinite alternate;
+  }
+  @keyframes psi-blink {
+    to {
+      opacity: 0.25;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .psi-orbit,
+    .psi-halo,
+    .psi-ping,
+    .flash,
+    .psi-card.is-scanning .psi-sweep,
+    .psi-card.is-scanning .psi-status-dot {
+      animation: none;
+    }
+  }
+</style>
