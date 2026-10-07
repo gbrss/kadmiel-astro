@@ -200,32 +200,54 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
     return json({ error: 'not_configured' }, 500);
   }
 
-  const subject = oneLine(`Nueva cotización: ${payload.project || 'Sitio web'} — ${payload.name}`).slice(0, 150);
+  const from = env.CONTACT_FROM || DEFAULT_FROM;
+  const toInternal = env.CONTACT_TO || DEFAULT_TO;
+  const subjectInternal = oneLine(
+    `Nueva cotización: ${payload.project || 'Sitio web'} — ${payload.name}`,
+  ).slice(0, 150);
+  const subjectClient = oneLine(
+    `Copia de tu cotización Kadmiel — ${payload.project || 'Sitio web'}`,
+  ).slice(0, 150);
 
-  let res: Response;
-  try {
-    res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${env.RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: env.CONTACT_FROM || DEFAULT_FROM,
-        to: [env.CONTACT_TO || DEFAULT_TO],
-        reply_to: payload.email,
-        subject,
-        text: buildText(payload),
-        html: buildHtml(payload),
-      }),
-    });
-  } catch {
+  async function sendResend(body: Record<string, unknown>): Promise<boolean> {
+    try {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  }
+
+  // 1) Aviso interno (Kadmiel)
+  const okInternal = await sendResend({
+    from,
+    to: [toInternal],
+    reply_to: payload.email,
+    subject: subjectInternal,
+    text: buildText(payload),
+    html: buildHtml(payload),
+  });
+
+  if (!okInternal) {
     return json({ error: 'send_failed' }, 502);
   }
 
-  if (!res.ok) {
-    return json({ error: 'send_failed' }, 502);
-  }
+  // 2) Copia de confirmación al cliente (no bloquea si falla)
+  await sendResend({
+    from,
+    to: [payload.email],
+    reply_to: toInternal,
+    subject: subjectClient,
+    text: buildClientText(payload),
+    html: buildClientHtml(payload),
+  });
 
   return json({ ok: true });
 };
