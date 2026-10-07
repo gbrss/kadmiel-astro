@@ -53,37 +53,59 @@ const steps = [
 
 <section id="proceso" class="py-24 bg-slate-950 border-t border-slate-800/80">
   <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center max-w-3xl mx-auto mb-14">
+    <div class="text-center max-w-3xl mx-auto mb-14 proceso-header">
       <h2 class="text-xs font-bold text-cyan-400 tracking-widest uppercase mb-3">Proceso claro</h2>
       <p class="text-3xl md:text-4xl font-extrabold text-white">De la idea al sitio online en 4 pasos</p>
       <p class="mt-3 text-slate-400 text-base">Sin rodeos. Sabes qué pasa, cuándo y cuánto cuesta. <span class="text-slate-500">Pasa el mouse o toca una tarjeta.</span></p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative" style="overflow: visible;">
+    <!-- Línea de progreso animada (desktop) -->
+    <div class="hidden lg:block relative max-w-7xl mx-auto mb-2 px-6" aria-hidden="true">
+      <div class="proceso-line">
+        <div class="proceso-line-fill" id="proceso-line-fill"></div>
+        <div class="proceso-line-dot" data-dot="0"></div>
+        <div class="proceso-line-dot" data-dot="1"></div>
+        <div class="proceso-line-dot" data-dot="2"></div>
+        <div class="proceso-line-dot" data-dot="3"></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative" style="overflow: visible; perspective: 1200px;">
       {steps.map((s, i) => (
         <div
-          class="step-card relative rounded-2xl border border-slate-800 bg-slate-900/50 p-6 transition-all duration-300 hover:border-violet-500/50 hover:bg-slate-900 cursor-pointer"
+          class="step-card relative rounded-2xl border border-slate-800 bg-slate-900/50 p-6 cursor-pointer"
           data-step={s.num}
+          data-index={i}
           tabindex="0"
           role="button"
           aria-expanded="false"
-          style="overflow: visible;"
+          style={`overflow: visible; --i: ${i}`}
         >
-          <span class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-violet-500/50 to-cyan-500/40">{s.num}</span>
-          <h3 class="mt-3 text-lg font-bold text-white">{s.title}</h3>
-          <p class="mt-2 text-sm text-slate-400 leading-relaxed">{s.desc}</p>
-          <p class="mt-3 text-xs font-semibold text-cyan-400/70 flex items-center gap-1">
+          <div class="step-ring" aria-hidden="true"></div>
+          <div class="step-glow" aria-hidden="true"></div>
+          <div class="step-shine" aria-hidden="true"></div>
+          <div class="step-particles" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+
+          <span class="step-num relative z-10 text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-violet-500/60 to-cyan-500/50" data-num={s.num}>{s.num}</span>
+          <h3 class="relative z-10 mt-3 text-lg font-bold text-white step-title">{s.title}</h3>
+          <p class="relative z-10 mt-2 text-sm text-slate-400 leading-relaxed">{s.desc}</p>
+          <p class="relative z-10 mt-3 text-xs font-semibold text-cyan-400/70 flex items-center gap-1.5">
+            <span class="step-pulse-dot"></span>
             Más info
-            <svg class="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+            <svg class="w-3.5 h-3.5 opacity-70 step-arrow-hint" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
           </p>
 
-          <!-- Popover flotante hacia ARRIBA -->
           <div class="step-pop" role="tooltip">
             <div class="step-pop-inner">
-              <p class="text-[10px] font-bold uppercase tracking-wider text-violet-300 mb-2">Detalle del paso</p>
+              <p class="text-[10px] font-bold uppercase tracking-wider text-violet-300 mb-2 flex items-center gap-2">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                Detalle del paso {s.num}
+              </p>
               <ul class="space-y-2">
-                {s.details.map((d) => (
-                  <li class="flex items-start gap-2 text-sm text-slate-200">
+                {s.details.map((d, di) => (
+                  <li class="step-detail-item flex items-start gap-2 text-sm text-slate-200" style={`--di: ${di}`}>
                     <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
                     <span>{d}</span>
                   </li>
@@ -91,23 +113,18 @@ const steps = [
               </ul>
               <p class="mt-3 text-xs text-slate-500 italic border-t border-slate-700/80 pt-3">{s.tip}</p>
             </div>
-            <!-- flecha hacia la card -->
             <span class="step-pop-arrow" aria-hidden="true"></span>
           </div>
-
-          {i < steps.length - 1 && (
-            <div class="hidden lg:block absolute top-1/2 -right-3 w-6 h-px bg-gradient-to-r from-violet-500/50 to-transparent z-0" aria-hidden="true"></div>
-          )}
         </div>
       ))}
     </div>
 
     <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-      <a href="#cotizador" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 text-white font-extrabold shadow-lg shadow-violet-600/30 hover:scale-[1.03] transition-all">
+      <a href="#cotizador" class="proceso-cta inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 text-white font-extrabold shadow-lg shadow-violet-600/30 transition-all">
         Empezar ahora — ver precios
       </a>
       <a href="https://wa.me/56945422388?text=Hola!%20Quiero%20hablar%20sobre%20un%20proyecto%20web%20con%20Kadmiel" target="_blank" rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 px-6 py-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 font-semibold hover:bg-emerald-500/20 transition-all">
+        class="inline-flex items-center gap-2 px-6 py-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 font-semibold hover:bg-emerald-500/20 hover:scale-[1.03] transition-all">
         <svg class="w-5 h-5" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
           <path d="M16.001 2.002c-7.713 0-13.975 6.262-13.975 13.975 0 2.465.643 4.868 1.865 6.99L2 30l7.2-1.886a13.92 13.92 0 006.801 1.735h.006c7.713 0 13.975-6.262 13.975-13.975S23.714 2.002 16.001 2.002zm0 25.54a11.54 11.54 0 01-5.88-1.605l-.421-.25-4.42 1.158 1.18-4.31-.274-.442a11.55 11.55 0 01-1.777-6.116c0-6.38 5.193-11.573 11.574-11.573 6.38 0 11.573 5.193 11.573 11.573 0 6.381-5.193 11.565-11.555 11.565z"/>
         </svg>
@@ -118,25 +135,231 @@ const steps = [
 </section>
 
 <style>
+  .proceso-header {
+    animation: fadeUp 0.6s ease-out both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Línea de progreso */
+  .proceso-line {
+    position: relative;
+    height: 2px;
+    margin: 0 8% 1.5rem;
+    background: rgba(51, 65, 85, 0.6);
+    border-radius: 2px;
+  }
+  .proceso-line-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #8b5cf6, #22d3ee);
+    transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 0 0 12px rgba(34, 211, 238, 0.5);
+  }
+  .proceso-line-dot {
+    position: absolute;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    margin-top: -5px;
+    margin-left: -5px;
+    border-radius: 50%;
+    background: #1e293b;
+    border: 2px solid #475569;
+    transition: all 0.3s ease;
+  }
+  .proceso-line-dot[data-dot="0"] { left: 0%; }
+  .proceso-line-dot[data-dot="1"] { left: 33.33%; }
+  .proceso-line-dot[data-dot="2"] { left: 66.66%; }
+  .proceso-line-dot[data-dot="3"] { left: 100%; }
+  .proceso-line-dot.active {
+    background: #22d3ee;
+    border-color: #a78bfa;
+    box-shadow: 0 0 12px rgba(34, 211, 238, 0.7);
+    transform: scale(1.25);
+  }
+
+  .step-card {
+    transform-style: preserve-3d;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    will-change: transform;
+    animation: stepIn 0.55s ease-out both;
+    animation-delay: calc(var(--i, 0) * 90ms);
+  }
+
+  @keyframes stepIn {
+    from { opacity: 0; transform: translateY(24px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .step-ring {
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba(139,92,246,0.5), rgba(34,211,238,0.4), rgba(139,92,246,0.2));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    padding: 1px;
+    transition: opacity 0.3s ease;
+    animation: ringSpin 4s linear infinite;
+    animation-play-state: paused;
+  }
+  .step-card:hover .step-ring,
+  .step-card.is-open .step-ring {
+    opacity: 1;
+    animation-play-state: running;
+  }
+  @keyframes ringSpin {
+    to { filter: hue-rotate(40deg); }
+  }
+
+  .step-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    background: radial-gradient(
+      420px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(139, 92, 246, 0.25),
+      rgba(34, 211, 238, 0.1) 35%,
+      transparent 60%
+    );
+  }
+
+  .step-shine {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    background: radial-gradient(
+      160px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(255, 255, 255, 0.09),
+      transparent 50%
+    );
+  }
+
+  .step-particles {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .step-card:hover .step-particles,
+  .step-card.is-open .step-particles {
+    opacity: 1;
+  }
+  .step-particles span {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #22d3ee;
+    opacity: 0.6;
+    animation: floatParticle 3s ease-in-out infinite;
+  }
+  .step-particles span:nth-child(1) { left: 15%; top: 20%; animation-delay: 0s; }
+  .step-particles span:nth-child(2) { left: 75%; top: 30%; animation-delay: 0.5s; background: #a78bfa; }
+  .step-particles span:nth-child(3) { left: 40%; top: 70%; animation-delay: 1s; }
+  .step-particles span:nth-child(4) { left: 85%; top: 65%; animation-delay: 1.4s; background: #a78bfa; }
+  .step-particles span:nth-child(5) { left: 25%; top: 50%; animation-delay: 0.8s; }
+  @keyframes floatParticle {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.4; }
+    50% { transform: translateY(-12px) scale(1.4); opacity: 0.9; }
+  }
+
+  .step-card:hover .step-glow,
+  .step-card:hover .step-shine,
+  .step-card.is-open .step-glow {
+    opacity: 1;
+  }
+
+  .step-card:hover,
+  .step-card.is-open {
+    border-color: rgba(139, 92, 246, 0.55);
+    background: rgba(15, 23, 42, 0.95);
+    box-shadow:
+      0 0 0 1px rgba(139, 92, 246, 0.15),
+      0 16px 48px rgba(0, 0, 0, 0.4),
+      0 0 80px rgba(139, 92, 246, 0.1);
+  }
+
+  .step-card:hover .step-num,
+  .step-card.is-open .step-num {
+    background-image: linear-gradient(to bottom right, #a78bfa, #22d3ee);
+    filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.35));
+  }
+
+  .step-card:hover .step-title {
+    color: #e0f2fe;
+  }
+
+  .step-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22d3ee;
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.5);
+    animation: pulseDot 1.6s ease-out infinite;
+  }
+  @keyframes pulseDot {
+    0% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(34, 211, 238, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0); }
+  }
+
+  .step-arrow-hint {
+    transition: transform 0.3s ease;
+  }
+  .step-card:hover .step-arrow-hint {
+    animation: bob 0.8s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(-2px); }
+    50% { transform: translateY(-7px); }
+  }
+
   .step-pop {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: calc(100% + 12px);
+    bottom: calc(100% + 14px);
     z-index: 30;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(8px) scale(0.98);
-    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    transform: translateY(14px) scale(0.92);
+    transition:
+      opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0.3s;
     pointer-events: none;
   }
 
   .step-pop-inner {
     border-radius: 1rem;
-    border: 1px solid rgba(139, 92, 246, 0.45);
-    background: #0f172a;
+    border: 1px solid rgba(139, 92, 246, 0.5);
+    background: linear-gradient(160deg, #131b2e 0%, #0f172a 100%);
     padding: 1rem 1.15rem;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(139, 92, 246, 0.1);
+    box-shadow:
+      0 24px 60px rgba(0, 0, 0, 0.6),
+      0 0 40px rgba(139, 92, 246, 0.15);
   }
 
   .step-pop-arrow {
@@ -147,12 +370,16 @@ const steps = [
     height: 12px;
     margin-left: -6px;
     background: #0f172a;
-    border-right: 1px solid rgba(139, 92, 246, 0.45);
-    border-bottom: 1px solid rgba(139, 92, 246, 0.45);
+    border-right: 1px solid rgba(139, 92, 246, 0.5);
+    border-bottom: 1px solid rgba(139, 92, 246, 0.5);
     transform: rotate(45deg);
   }
 
-  /* Desktop: hover / focus */
+  .step-detail-item {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+
   @media (hover: hover) and (pointer: fine) {
     .step-card:hover .step-pop,
     .step-card:focus-within .step-pop {
@@ -161,36 +388,93 @@ const steps = [
       transform: translateY(0) scale(1);
       pointer-events: auto;
     }
+    .step-card:hover .step-detail-item {
+      animation: detailIn 0.35s ease-out both;
+      animation-delay: calc(var(--di, 0) * 60ms);
+    }
   }
 
-  /* Móvil / touch: clase is-open */
   .step-card.is-open .step-pop {
     opacity: 1;
     visibility: visible;
     transform: translateY(0) scale(1);
     pointer-events: auto;
   }
-
-  .step-card.is-open {
-    border-color: rgba(139, 92, 246, 0.5);
-    background: rgba(15, 23, 42, 0.95);
+  .step-card.is-open .step-detail-item {
+    animation: detailIn 0.35s ease-out both;
+    animation-delay: calc(var(--di, 0) * 60ms);
   }
 
-  /* Evitar que overflow del grid recorte el popover */
-  #proceso .grid {
-    overflow: visible;
+  @keyframes detailIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .proceso-cta:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.45);
+  }
+
+  #proceso .grid { overflow: visible; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .step-card, .proceso-header {
+      animation: none;
+      transform: none !important;
+    }
+    .step-arrow-hint, .step-pulse-dot, .step-particles span, .step-ring {
+      animation: none !important;
+    }
   }
 </style>
 
 <script>
-  const cards = document.querySelectorAll('.step-card');
+  const cards = document.querySelectorAll('.step-card') as NodeListOf<HTMLElement>;
+  const lineFill = document.getElementById('proceso-line-fill');
+  const dots = document.querySelectorAll('.proceso-line-dot');
+  const finePointer = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  function setProgress(index: number) {
+    if (lineFill) {
+      const pct = (index / 3) * 100;
+      lineFill.style.width = `${pct}%`;
+    }
+    dots.forEach((d, i) => {
+      d.classList.toggle('active', i <= index);
+    });
+  }
 
   cards.forEach((card) => {
-    card.addEventListener('click', (e) => {
-      // En desktop con hover no hace falta; en touch/móvil sí
-      const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-      if (fine) return;
+    const idx = parseInt(card.getAttribute('data-index') || '0', 10);
 
+    card.addEventListener('pointermove', (e: PointerEvent) => {
+      if (!finePointer()) return;
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--mx', `${(x / rect.width) * 100}%`);
+      card.style.setProperty('--my', `${(y / rect.height) * 100}%`);
+
+      const rx = ((y / rect.height) - 0.5) * -12;
+      const ry = ((x / rect.width) - 0.5) * 14;
+      card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(8px) scale3d(1.03, 1.03, 1.03)`;
+    });
+
+    card.addEventListener('pointerenter', () => {
+      setProgress(idx);
+    });
+
+    card.addEventListener('pointerleave', () => {
+      card.style.transform = '';
+      card.style.setProperty('--mx', '50%');
+      card.style.setProperty('--my', '50%');
+      // si ninguna tiene hover, reset suave
+      const anyHover = [...cards].some((c) => c.matches(':hover'));
+      if (!anyHover) setProgress(0);
+    });
+
+    card.addEventListener('click', (e) => {
+      if (finePointer()) return;
       e.stopPropagation();
       const open = card.classList.contains('is-open');
       cards.forEach((c) => {
@@ -200,6 +484,9 @@ const steps = [
       if (!open) {
         card.classList.add('is-open');
         card.setAttribute('aria-expanded', 'true');
+        setProgress(idx);
+      } else {
+        setProgress(0);
       }
     });
   });
@@ -210,4 +497,7 @@ const steps = [
       c.setAttribute('aria-expanded', 'false');
     });
   });
+
+  // Arranque: primer punto activo
+  setProgress(0);
 </script>
