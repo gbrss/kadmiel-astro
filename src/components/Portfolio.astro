@@ -16,13 +16,23 @@ const projects = [
   },
   {
     id: 2,
+    title: 'Rhino SpA',
+    category: 'Tienda Web / Catálogo',
+    url: 'https://rhino-spa.cl',
+    score: 100,
+    description: 'Sitio corporativo para el sector minero: presencia digital sólida, SEO y contacto directo.',
+    image: '/portafolio/rhino-spa.png',
+    tags: ['Servicios', 'SEO', 'Astro'],
+  },
+  {
+    id: 3,
     title: 'Productos Náuticos',
     category: 'Tienda Web / Catálogo',
     url: 'https://productosnauticos.cl',
     score: 100,
     description: 'Catálogo online de productos náuticos con navegación rápida y foco en conversión.',
     image: '/portafolio/productosnauticos.png',
-    tags: ['Catálogo', 'Conversión', 'Astro'],
+    tags: ['Catálogo', 'WebPay', 'Astro'],
   },
   {
     id: 3,
@@ -42,7 +52,7 @@ const projects = [
     score: 98,
     description: 'Turismo y transporte: landing de alta conversión con Webpay y Core Web Vitals altos.',
     image: '/portafolio/brahuertours.png',
-    tags: ['Turismo', 'Webpay', 'Core Web Vitals'],
+    tags: ['Turismo', 'Webpay', 'Landing'],
   },
   {
     id: 5,
@@ -186,53 +196,68 @@ const projects = [
       el.scrollTo({ left: clamped * cardWidth(), behavior: 'smooth' });
     }
 
-    // --- Drag (mouse + touch via Pointer Events) ---
+    // --- Drag (mouse + touch) sin bloquear links ---
     let isDown = false;
+    let dragging = false;
     let startX = 0;
     let startScroll = 0;
-    let moved = false;
+    let pointerId: number | null = null;
     let userPaused = false;
 
     el.addEventListener('pointerdown', (e: PointerEvent) => {
-      // solo botón primario / touch
       if (e.button !== 0 && e.pointerType === 'mouse') return;
+      const target = e.target as HTMLElement | null;
+      // No iniciar drag sobre links o botones
+      if (target?.closest('a, button')) return;
       isDown = true;
-      moved = false;
+      dragging = false;
       startX = e.clientX;
       startScroll = el.scrollLeft;
-      el.setPointerCapture(e.pointerId);
-      el.classList.add('cursor-grabbing');
-      el.classList.remove('cursor-grab');
+      pointerId = e.pointerId;
       userPaused = true;
     });
 
     el.addEventListener('pointermove', (e: PointerEvent) => {
       if (!isDown) return;
       const dx = e.clientX - startX;
-      if (Math.abs(dx) > 4) moved = true;
+      if (!dragging && Math.abs(dx) > 6) {
+        dragging = true;
+        if (pointerId !== null) {
+          try { el.setPointerCapture(pointerId); } catch {}
+        }
+        el.classList.add('cursor-grabbing');
+        el.classList.remove('cursor-grab');
+      }
+      if (!dragging) return;
       el.scrollLeft = startScroll - dx;
       e.preventDefault();
     });
 
     function endDrag(e: PointerEvent) {
       if (!isDown) return;
+      const wasDragging = dragging;
       isDown = false;
+      dragging = false;
       el.classList.remove('cursor-grabbing');
       el.classList.add('cursor-grab');
-      try { el.releasePointerCapture(e.pointerId); } catch {}
-      scrollToIndex(currentIndex());
+      if (pointerId !== null) {
+        try { el.releasePointerCapture(pointerId); } catch {}
+        pointerId = null;
+      }
+      if (wasDragging) {
+        scrollToIndex(currentIndex());
+      }
       setTimeout(() => { userPaused = false; }, 8000);
     }
 
     el.addEventListener('pointerup', endDrag);
     el.addEventListener('pointercancel', endDrag);
 
-    // Evitar click en links si hubo drag
+    // Solo cancelar click si hubo arrastre real
     el.addEventListener('click', (e) => {
-      if (moved) {
+      if (dragging) {
         e.preventDefault();
         e.stopPropagation();
-        moved = false;
       }
     }, true);
 
