@@ -1,0 +1,121 @@
+---
+import type { Hue, Testimonial } from '../data/testimonials';
+
+interface Props {
+  t: Testimonial;
+}
+
+const { t } = Astro.props;
+
+const hueStyles: Record<Hue, { avatar: string; chip: string; glow: string }> = {
+  violet: {
+    avatar: 'from-violet-500 to-indigo-500',
+    chip: 'bg-violet-500/10 text-violet-300 border-violet-500/25',
+    glow: 'rgba(139, 92, 246, 0.16)',
+  },
+  cyan: {
+    avatar: 'from-cyan-400 to-sky-500',
+    chip: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/25',
+    glow: 'rgba(34, 211, 238, 0.14)',
+  },
+  emerald: {
+    avatar: 'from-emerald-400 to-teal-500',
+    chip: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/25',
+    glow: 'rgba(52, 211, 153, 0.14)',
+  },
+  amber: {
+    avatar: 'from-amber-400 to-orange-500',
+    chip: 'bg-amber-500/10 text-amber-300 border-amber-500/25',
+    glow: 'rgba(251, 191, 36, 0.14)',
+  },
+  rose: {
+    avatar: 'from-rose-400 to-pink-500',
+    chip: 'bg-rose-500/10 text-rose-300 border-rose-500/25',
+    glow: 'rgba(251, 113, 133, 0.14)',
+  },
+  indigo: {
+    avatar: 'from-indigo-400 to-violet-500',
+    chip: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/25',
+    glow: 'rgba(129, 140, 248, 0.16)',
+  },
+};
+
+const h = hueStyles[t.hue];
+
+const initials = t.name
+  .split(' ')
+  .map((p) => p[0])
+  .slice(0, 2)
+  .join('')
+  .toUpperCase();
+---
+
+<figure
+  class="reveal testi-card group relative flex h-full flex-col rounded-2xl border border-slate-800 bg-slate-900/60 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/40 hover:bg-slate-900"
+  style={`--glow: ${h.glow};`}
+>
+  <!-- Glow al hover -->
+  <div class="testi-glow pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" aria-hidden="true"></div>
+
+  <!-- Comilla decorativa -->
+  <svg class="absolute right-5 top-5 h-8 w-8 text-slate-700/70 transition-colors duration-300 group-hover:text-violet-500/40" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M9.4 5C5.9 6.6 3.5 9.8 3.5 14v5h6.6v-6.2H6.9c0-2.3 1.2-4 3.3-5.1L9.4 5zm9 0c-3.5 1.6-5.9 4.8-5.9 9v5h6.6v-6.2h-3.2c0-2.3 1.2-4 3.3-5.1L18.4 5z"/>
+  </svg>
+
+  <div class="relative flex flex-1 flex-col">
+    <!-- Estrellas -->
+    <div class="mb-4 flex items-center gap-0.5" role="img" aria-label={`${t.rating} de 5 estrellas`}>
+      {Array.from({ length: 5 }).map((_, s) => (
+        <svg
+          class={`h-4 w-4 ${s < t.rating ? 'text-amber-400' : 'text-slate-700'}`}
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L10 14.9l-5.2 2.8 1-5.9L1.5 7.7l5.9-.8L10 1.5z" />
+        </svg>
+      ))}
+    </div>
+
+    <div class="mb-5">
+      <blockquote class="text-[15px] leading-relaxed text-slate-300">“{t.quote}”</blockquote>
+
+      {t.result && (
+        <div class="mt-4">
+          <span class={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${h.chip}`}>
+            <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 14l5-5 3 3 6-7M13 5h4v4" />
+            </svg>
+            {t.result}
+          </span>
+        </div>
+      )}
+    </div>
+
+    <figcaption class="mt-auto flex items-center gap-3 border-t border-slate-800 pt-5">
+      <div
+        class={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${h.avatar} text-sm font-black text-white shadow-lg`}
+        aria-hidden="true"
+      >
+        {initials}
+      </div>
+      <div class="min-w-0">
+        <p class="truncate text-sm font-bold text-white">{t.name}</p>
+        <p class="truncate text-xs text-slate-400">{t.role} · {t.company}</p>
+        <p class="mt-0.5 text-[11px] font-semibold text-cyan-400/80">{t.project}</p>
+      </div>
+    </figcaption>
+  </div>
+</figure>
+
+<style>
+  .testi-glow {
+    background: radial-gradient(ellipse at 50% 0%, var(--glow), transparent 70%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .testi-glow {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,177 @@
+---
+import TestimonialCard from './TestimonialCard.astro';
+import { SAMPLE_DATA, testimonials } from '../data/testimonials';
+
+const VISIBLE = 3;
+const firstRow = testimonials.slice(0, VISIBLE);
+const extra = testimonials.slice(VISIBLE);
+
+const average = testimonials.reduce((sum, t) => sum + t.rating, 0) / testimonials.length;
+---
+
+<section id="testimonios" class="relative py-24 bg-[#090d16] border-t border-slate-800/80 overflow-hidden">
+  <!-- Resplandores de fondo -->
+  <div class="pointer-events-none absolute -top-24 left-1/4 h-[420px] w-[420px] rounded-full bg-violet-600/10 blur-[130px]" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute bottom-0 right-1/4 h-[360px] w-[360px] rounded-full bg-cyan-500/10 blur-[120px]" aria-hidden="true"></div>
+
+  <div class="relative max-w-7xl mx-auto px-6">
+    <!-- Encabezado -->
+    <div class="text-center max-w-3xl mx-auto mb-14">
+      <h2 class="text-xs font-bold text-cyan-400 tracking-widest uppercase mb-3">Testimonios</h2>
+      <p class="text-3xl md:text-5xl font-extrabold text-white leading-tight">
+        Lo que dicen quienes ya tienen su sitio con Kadmiel
+      </p>
+      <p class="mt-4 text-slate-400 text-base md:text-lg">
+        Emprendedores y empresas que pasaron a una web rápida, clara y sin dolores de cabeza.
+      </p>
+
+      <div class="mt-7 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-full border border-slate-800 bg-slate-900/70 px-5 py-2.5 backdrop-blur">
+        <span class="flex items-center gap-0.5 text-amber-400" aria-hidden="true">
+          {Array.from({ length: 5 }).map(() => (
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L10 14.9l-5.2 2.8 1-5.9L1.5 7.7l5.9-.8L10 1.5z"/></svg>
+          ))}
+        </span>
+        <span class="text-sm font-bold text-white tabular-nums">{average.toFixed(1)} / 5</span>
+        <span class="text-sm text-slate-400">· {testimonials.length} opiniones</span>
+      </div>
+
+      {SAMPLE_DATA && (
+        <p class="mt-4 text-[11px] font-semibold uppercase tracking-widest text-amber-400/80">
+          Testimonios de ejemplo — reemplazar por reales antes de publicar
+        </p>
+      )}
+    </div>
+
+    <!-- Primeras 3 tarjetas (siempre visibles) -->
+    <div id="testi-first" class="scroll-mt-28 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {firstRow.map((t) => <TestimonialCard t={t} />)}
+    </div>
+
+    <!-- Resto (se expande / contrae) -->
+    <div id="testi-extra" class="testi-extra" data-open="false" inert aria-hidden="true">
+      <div class="testi-extra-inner">
+        <div class="grid grid-cols-1 gap-6 pt-6 md:grid-cols-2 lg:grid-cols-3">
+          {extra.map((t) => <TestimonialCard t={t} />)}
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón expandir / contraer -->
+    {extra.length > 0 && (
+      <div class="mt-10 flex justify-center">
+        <button
+          id="testi-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="testi-extra"
+          data-more={`Ver ${extra.length} testimonios más`}
+          data-less="Mostrar menos"
+          class="group inline-flex items-center gap-2.5 rounded-xl border border-slate-700 bg-slate-900/80 px-6 py-3 text-sm font-bold text-slate-200 backdrop-blur transition-all hover:border-violet-500/50 hover:bg-slate-900 hover:text-white hover:shadow-lg hover:shadow-violet-500/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
+        >
+          <span id="testi-toggle-label">Ver {extra.length} testimonios más</span>
+          <svg
+            id="testi-toggle-icon"
+            class="h-4 w-4 text-cyan-400 transition-transform duration-500"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+      </div>
+    )}
+
+    <!-- CTA -->
+    <div class="mt-12 text-center">
+      <a
+        href="#cotizador"
+        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 px-8 py-4 text-base font-extrabold text-white shadow-xl shadow-violet-600/30 transition-all hover:scale-105"
+      >
+        Quiero un resultado así
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Altura animada con grid: 0fr -> 1fr (sin medir alturas en JS) */
+  .testi-extra {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.5s ease;
+  }
+  .testi-extra[data-open='true'] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  .testi-extra-inner {
+    overflow: hidden;
+    min-height: 0;
+    /* margen para que el hover (translateY) y las sombras no se recorten */
+    margin: 0 -0.5rem;
+    padding: 0 0.5rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .testi-extra {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.getElementById('testi-toggle') as HTMLButtonElement | null;
+  const extra = document.getElementById('testi-extra') as HTMLElement | null;
+  const label = document.getElementById('testi-toggle-label');
+  const icon = document.getElementById('testi-toggle-icon');
+  const firstRow = document.getElementById('testi-first');
+
+  if (toggle && extra && label && icon) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cards = Array.from(extra.querySelectorAll<HTMLElement>('.testi-card'));
+
+    function setOpen(open: boolean) {
+      extra!.dataset.open = String(open);
+      toggle!.setAttribute('aria-expanded', String(open));
+      label!.textContent = open ? toggle!.dataset.less ?? '' : toggle!.dataset.more ?? '';
+      icon!.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+
+      // inert + aria-hidden: lo oculto no es enfocable ni se anuncia
+      if (open) {
+        extra!.removeAttribute('inert');
+        extra!.removeAttribute('aria-hidden');
+      } else {
+        extra!.setAttribute('inert', '');
+        extra!.setAttribute('aria-hidden', 'true');
+      }
+
+      // Entrada escalonada de las tarjetas al expandir
+      cards.forEach((card, i) => {
+        if (open) {
+          card.style.transitionDelay = reduceMotion ? '0ms' : `${120 + i * 70}ms`;
+          card.classList.add('is-visible');
+        } else {
+          card.style.transitionDelay = '0ms';
+        }
+      });
+
+      // Al contraer, volver a la primera fila para no perder la posición
+      if (!open && firstRow) {
+        firstRow.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      }
+    }
+
+    toggle.addEventListener('click', () => {
+      setOpen(extra.dataset.open !== 'true');
+    });
+  }
+</script>
