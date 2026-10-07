@@ -5,7 +5,7 @@
     <div class="text-center max-w-3xl mx-auto mb-12">
       <h2 class="text-xs font-bold text-cyan-400 tracking-widest uppercase mb-3">Calculadora Transparente</h2>
       <p class="text-3xl md:text-5xl font-extrabold text-white">Estima el Valor de tu Proyecto Web</p>
-      <p class="mt-3 text-slate-400 text-sm md:text-base">Selecciona el tipo de sitio y módulos. Al finalizar te enviamos el detalle por WhatsApp.</p>
+      <p class="mt-3 text-slate-400 text-sm md:text-base">Selecciona el tipo de sitio y módulos. Al finalizar puedes enviarnos el detalle por WhatsApp o por correo.</p>
     </div>
 
     <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 md:p-12 shadow-2xl">
@@ -132,6 +132,7 @@
                 Landing Page
               </p>
             </div>
+            <div class="flex flex-col gap-3 w-full md:w-auto shrink-0">
             <button
               type="button"
               id="send-quote"
@@ -142,12 +143,188 @@
               </svg>
               Solicitar por WhatsApp
             </button>
+
+            <button
+              type="button"
+              id="email-toggle"
+              aria-expanded="false"
+              aria-controls="quote-form-panel"
+              class="w-full md:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-violet-500/60 bg-violet-500/10 hover:bg-violet-500/20 hover:border-violet-400 text-violet-100 font-black text-base transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+            >
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 7l9 6 9-6" />
+              </svg>
+              Solicitar por correo
+              <svg id="email-toggle-icon" class="w-4 h-4 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+            </div>
+          </div>
+
+          <!-- Formulario de solicitud por correo (se despliega) -->
+          <div id="quote-form-panel" class="quote-panel" data-open="false" inert aria-hidden="true">
+            <div class="quote-panel-inner">
+              <div class="mt-6 pt-6 border-t border-slate-800">
+                <!-- Estado: formulario -->
+                <div id="quote-form-view">
+                  <div class="mb-5">
+                    <h3 class="text-xl font-extrabold text-white">Cuéntanos de tu proyecto</h3>
+                    <p class="mt-1 text-sm text-slate-400">
+                      Completa tus datos y tu solicitud llegará a
+                      <span class="font-semibold text-cyan-300">contacto@kadmiel.cl</span>.
+                    </p>
+                  </div>
+
+                  <div class="mb-6 rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3">
+                    <span class="text-[11px] font-bold uppercase tracking-widest text-slate-500">Tu selección</span>
+                    <p id="form-selection" class="mt-0.5 text-sm text-slate-200">Landing Page</p>
+                    <p id="form-total" class="text-sm font-bold text-violet-300 tabular-nums">$150.000 CLP</p>
+                  </div>
+
+                  <form id="quote-form" class="space-y-4" autocomplete="on">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div>
+                        <label for="qf-name" class="mb-1.5 block text-xs font-bold text-slate-300">Nombre <span class="text-rose-400" aria-hidden="true">*</span></label>
+                        <input id="qf-name" name="name" type="text" required minlength="2" maxlength="100" autocomplete="name" placeholder="Tu nombre" class="qf-input" />
+                      </div>
+                      <div>
+                        <label for="qf-email" class="mb-1.5 block text-xs font-bold text-slate-300">Correo <span class="text-rose-400" aria-hidden="true">*</span></label>
+                        <input id="qf-email" name="email" type="email" required maxlength="150" autocomplete="email" placeholder="tucorreo@empresa.cl" class="qf-input" />
+                      </div>
+                      <div>
+                        <label for="qf-phone" class="mb-1.5 block text-xs font-bold text-slate-300">Teléfono <span class="font-normal text-slate-500">(opcional)</span></label>
+                        <input id="qf-phone" name="phone" type="tel" maxlength="30" autocomplete="tel" placeholder="+56 9 1234 5678" class="qf-input" />
+                      </div>
+                      <div>
+                        <label for="qf-company" class="mb-1.5 block text-xs font-bold text-slate-300">Empresa o proyecto <span class="font-normal text-slate-500">(opcional)</span></label>
+                        <input id="qf-company" name="company" type="text" maxlength="120" autocomplete="organization" placeholder="Nombre de tu negocio" class="qf-input" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label for="qf-message" class="mb-1.5 block text-xs font-bold text-slate-300">Mensaje <span class="font-normal text-slate-500">(opcional)</span></label>
+                      <textarea id="qf-message" name="message" rows="4" maxlength="2000" placeholder="Cuéntanos qué necesitas, plazos, referencias de sitios que te gusten…" class="qf-input resize-y"></textarea>
+                    </div>
+
+                    <!-- Honeypot anti-spam: los usuarios reales no lo ven ni lo llenan -->
+                    <div class="qf-trap" aria-hidden="true">
+                      <label for="qf-website">No completar este campo</label>
+                      <input id="qf-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+                    </div>
+
+                    <div id="quote-error" class="hidden rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200" role="alert">
+                      <p id="quote-error-text">No pudimos enviar tu solicitud.</p>
+                      <p class="mt-1">
+                        Puedes escribirnos directamente:
+                        <a id="quote-mailto" href="mailto:contacto@kadmiel.cl" class="font-bold text-white underline underline-offset-2 hover:text-cyan-300">abrir mi correo</a>
+                      </p>
+                    </div>
+
+                    <div class="flex flex-col-reverse gap-3 pt-1 sm:flex-row sm:items-center sm:justify-end">
+                      <button type="button" id="quote-cancel" class="rounded-xl px-5 py-3 text-sm font-bold text-slate-400 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400">
+                        Cancelar
+                      </button>
+                      <button
+                        type="submit"
+                        id="quote-submit"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 px-8 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-violet-600/30 transition-all hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-wait disabled:opacity-70 disabled:hover:scale-100"
+                      >
+                        <svg id="quote-spinner" class="hidden h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" opacity="0.25" />
+                          <path d="M21 12a9 9 0 00-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                        </svg>
+                        <span id="quote-submit-label">Enviar solicitud</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Estado: enviado -->
+                <div id="quote-success-view" class="hidden py-4 text-center" role="status" aria-live="polite">
+                  <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400">
+                    <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h3 class="text-xl font-extrabold text-white">¡Solicitud enviada!</h3>
+                  <p class="mx-auto mt-2 max-w-md text-sm text-slate-400">
+                    Recibimos tu cotización. Te responderemos a
+                    <span id="quote-success-email" class="font-semibold text-cyan-300"></span>.
+                  </p>
+                  <button type="button" id="quote-done" class="mt-5 rounded-xl border border-slate-700 px-6 py-2.5 text-sm font-bold text-slate-200 transition-colors hover:border-violet-500/50 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400">
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+  /* Panel desplegable: altura animada con grid 0fr -> 1fr */
+  .quote-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.4s ease;
+  }
+  .quote-panel[data-open='true'] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  .quote-panel-inner {
+    overflow: hidden;
+    min-height: 0;
+    /* respiro lateral para que el anillo de foco no se recorte */
+    margin: 0 -0.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .qf-input {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid rgb(51 65 85);
+    background: rgb(15 23 42);
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: white;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .qf-input::placeholder {
+    color: rgb(100 116 139);
+  }
+  .qf-input:focus {
+    outline: none;
+    border-color: rgb(139 92 246);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+  }
+  .qf-input:user-invalid {
+    border-color: rgb(244 63 94);
+  }
+
+  /* Honeypot fuera de pantalla */
+  .qf-trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .quote-panel {
+      transition: none;
+    }
+  }
+</style>
 
 <script>
   const PHONE = '56945422388'; // sin + ni espacios (formato wa.me)
@@ -193,14 +370,18 @@
       totalPriceEl.textContent = formatCLP(total);
     }
 
+    const summaryText =
+      mods.length === 0 ? selectedType : `${selectedType} + ${mods.map((m) => m.name).join(' · ')}`;
+
     if (quoteSummaryEl) {
-      if (mods.length === 0) {
-        quoteSummaryEl.textContent = selectedType;
-      } else {
-        const modsText = mods.map((m) => m.name).join(' · ');
-        quoteSummaryEl.textContent = `${selectedType} + ${modsText}`;
-      }
+      quoteSummaryEl.textContent = summaryText;
     }
+
+    // Mantiene sincronizado el resumen dentro del formulario de correo
+    const formSelectionEl = document.getElementById('form-selection');
+    const formTotalEl = document.getElementById('form-total');
+    if (formSelectionEl) formSelectionEl.textContent = summaryText;
+    if (formTotalEl) formTotalEl.textContent = formatCLP(total);
   }
 
   function buildWhatsAppMessage(): string {
@@ -270,6 +451,209 @@
 
   // CTA → WhatsApp con detalle
   sendQuoteBtn?.addEventListener('click', openWhatsApp);
+
+  /* ------------------------------------------------------------------
+   * Solicitud por correo
+   * El formulario envía JSON a /api/contact (functions/api/contact.ts),
+   * que reenvía el mensaje a contacto@kadmiel.cl.
+   * ---------------------------------------------------------------- */
+  const CONTACT_EMAIL = 'contacto@kadmiel.cl';
+  const CONTACT_ENDPOINT = '/api/contact';
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const emailToggle = document.getElementById('email-toggle') as HTMLButtonElement | null;
+  const emailToggleIcon = document.getElementById('email-toggle-icon');
+  const formPanel = document.getElementById('quote-form-panel');
+  const formView = document.getElementById('quote-form-view');
+  const successView = document.getElementById('quote-success-view');
+  const successEmailEl = document.getElementById('quote-success-email');
+  const quoteForm = document.getElementById('quote-form') as HTMLFormElement | null;
+  const submitBtn = document.getElementById('quote-submit') as HTMLButtonElement | null;
+  const submitLabel = document.getElementById('quote-submit-label');
+  const spinner = document.getElementById('quote-spinner');
+  const errorBox = document.getElementById('quote-error');
+  const errorText = document.getElementById('quote-error-text');
+  const mailtoLink = document.getElementById('quote-mailto') as HTMLAnchorElement | null;
+  const cancelBtn = document.getElementById('quote-cancel');
+  const doneBtn = document.getElementById('quote-done');
+
+  interface QuotePayload {
+    name: string;
+    email: string;
+    phone: string;
+    company: string;
+    message: string;
+    website: string; // honeypot
+    project: string;
+    projectPrice: number;
+    modules: { name: string; price: number }[];
+    total: number;
+  }
+
+  function isPanelOpen(): boolean {
+    return formPanel?.dataset.open === 'true';
+  }
+
+  function setPanelOpen(open: boolean, opts: { focus?: boolean } = {}) {
+    if (!formPanel || !emailToggle) return;
+    formPanel.dataset.open = String(open);
+    emailToggle.setAttribute('aria-expanded', String(open));
+    if (emailToggleIcon) emailToggleIcon.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+
+    // Lo oculto no debe ser enfocable ni anunciado
+    if (open) {
+      formPanel.removeAttribute('inert');
+      formPanel.removeAttribute('aria-hidden');
+    } else {
+      formPanel.setAttribute('inert', '');
+      formPanel.setAttribute('aria-hidden', 'true');
+    }
+
+    if (open && opts.focus !== false) {
+      window.setTimeout(
+        () => {
+          formPanel.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
+          const first = successView && !successView.classList.contains('hidden')
+            ? doneBtn
+            : (document.getElementById('qf-name') as HTMLElement | null);
+          first?.focus({ preventScroll: true });
+        },
+        reduceMotion ? 0 : 350,
+      );
+    }
+  }
+
+  function showFormState() {
+    formView?.classList.remove('hidden');
+    successView?.classList.add('hidden');
+  }
+
+  function setSending(sending: boolean) {
+    if (submitBtn) submitBtn.disabled = sending;
+    if (spinner) spinner.classList.toggle('hidden', !sending);
+    if (submitLabel) submitLabel.textContent = sending ? 'Enviando…' : 'Enviar solicitud';
+  }
+
+  function hideError() {
+    errorBox?.classList.add('hidden');
+  }
+
+  function buildMailBody(p: QuotePayload): string {
+    const lines = [
+      'Hola! Quiero solicitar una cotización con Kadmiel:',
+      '',
+      `• Proyecto: ${p.project} (${formatCLP(p.projectPrice)})`,
+    ];
+    if (p.modules.length > 0) {
+      lines.push('• Módulos adicionales:');
+      p.modules.forEach((m) => lines.push(`  – ${m.name}: ${formatCLP(m.price)}`));
+    } else {
+      lines.push('• Sin módulos adicionales');
+    }
+    lines.push('', `Total estimado: ${formatCLP(p.total)}`, '');
+    lines.push(`Nombre: ${p.name}`);
+    if (p.company) lines.push(`Empresa / proyecto: ${p.company}`);
+    if (p.phone) lines.push(`Teléfono: ${p.phone}`);
+    lines.push(`Correo: ${p.email}`);
+    if (p.message) lines.push('', p.message);
+    return lines.join('\n');
+  }
+
+  function showError(payload: QuotePayload, text: string) {
+    if (errorText) errorText.textContent = text;
+    if (mailtoLink) {
+      const subject = `Cotización web: ${payload.project}`;
+      mailtoLink.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(buildMailBody(payload))}`;
+    }
+    errorBox?.classList.remove('hidden');
+  }
+
+  function collectPayload(form: HTMLFormElement): QuotePayload {
+    const data = new FormData(form);
+    const get = (key: string) => String(data.get(key) ?? '').trim();
+    return {
+      name: get('name'),
+      email: get('email'),
+      phone: get('phone'),
+      company: get('company'),
+      message: get('message'),
+      website: get('website'),
+      project: selectedType,
+      projectPrice: basePrice,
+      modules: getSelectedModules(),
+      total: calculateTotal(),
+    };
+  }
+
+  emailToggle?.addEventListener('click', () => {
+    if (!isPanelOpen()) {
+      showFormState();
+      hideError();
+    }
+    setPanelOpen(!isPanelOpen());
+  });
+
+  cancelBtn?.addEventListener('click', () => {
+    setPanelOpen(false);
+    emailToggle?.focus({ preventScroll: true });
+  });
+
+  doneBtn?.addEventListener('click', () => {
+    setPanelOpen(false);
+    emailToggle?.focus({ preventScroll: true });
+    window.setTimeout(showFormState, reduceMotion ? 0 : 650);
+  });
+
+  // Esc cierra el panel
+  formPanel?.addEventListener('keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Escape') {
+      setPanelOpen(false);
+      emailToggle?.focus({ preventScroll: true });
+    }
+  });
+
+  quoteForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!quoteForm.reportValidity()) return;
+
+    const payload = collectPayload(quoteForm);
+    hideError();
+    setSending(true);
+
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 15000);
+
+    try {
+      const res = await fetch(CONTACT_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+
+      if (!res.ok) {
+        throw new Error(res.status === 400 ? 'invalid' : 'server');
+      }
+
+      if (successEmailEl) successEmailEl.textContent = payload.email;
+      formView?.classList.add('hidden');
+      successView?.classList.remove('hidden');
+      quoteForm.reset();
+      doneBtn?.focus({ preventScroll: true });
+    } catch (err) {
+      const invalid = err instanceof Error && err.message === 'invalid';
+      showError(
+        payload,
+        invalid
+          ? 'Revisa los datos ingresados e inténtalo de nuevo.'
+          : 'No pudimos enviar tu solicitud en este momento.',
+      );
+    } finally {
+      window.clearTimeout(timeout);
+      setSending(false);
+    }
+  });
 
   // Estado inicial coherente
   updateUI();
