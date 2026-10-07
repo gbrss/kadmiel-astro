@@ -1,21 +1,12 @@
 /**
  * POST /api/contact
  *
- * Cloudflare Pages Function: recibe el formulario "Solicitar por correo" del
- * cotizador y lo envía a contacto@kadmiel.cl usando la API de Resend.
+ * Cloudflare Pages Function: cotizador → correo a Kadmiel + copia al cliente (Resend).
  *
- * Configuración (Cloudflare Pages → Settings → Variables and Secrets):
- *   RESEND_API_KEY  (secret, obligatorio)  API key de https://resend.com
- *   CONTACT_TO      (opcional)  destinatario; por defecto contacto@kadmiel.cl
- *   CONTACT_FROM    (opcional)  remitente; por defecto "Kadmiel Web <web@kadmiel.cl>"
- *                               El dominio kadmiel.cl debe estar verificado en Resend.
- *
- * Desarrollo local: crea un archivo `.dev.vars` (ya ignorado por git) con
- *   RESEND_API_KEY=re_xxx
- * y corre `npx wrangler pages dev dist` después de `npm run build`.
- *
- * Nota: los tipos están declarados a mano para no depender de
- * @cloudflare/workers-types y que `astro check` compile sin problemas.
+ * Variables (Pages → Settings → Variables and secrets):
+ *   RESEND_API_KEY  (secret, obligatorio)
+ *   CONTACT_TO      (opcional, default contacto@kadmiel.cl)
+ *   CONTACT_FROM    (opcional, default Kadmiel Web <web@kadmiel.cl>)
  */
 
 interface Env {
@@ -61,7 +52,6 @@ function json(body: Record<string, unknown>, status = 200): Response {
   });
 }
 
-/** Texto de una sola línea (evita saltos de línea en asunto/nombres). */
 function oneLine(value: string): string {
   return value.replace(/[\r\n\t]+/g, ' ').trim();
 }
@@ -87,83 +77,143 @@ function escapeHtml(value: string): string {
 const clp = (n: number) => `$${n.toLocaleString('es-CL')} CLP`;
 
 function parsePayload(raw: unknown): Payload | null {
-  if (typeof raw !== 'object' || raw === null) return null;
-  const r = raw as Record<string, unknown>;
+  if (!raw || typeof raw !== 'object') return null;
+  const o = raw as Record<string, unknown>;
 
-  const modules: ModuleItem[] = Array.isArray(r.modules)
-    ? r.modules.slice(0, 10).map((m): ModuleItem => {
-        const item = (typeof m === 'object' && m !== null ? m : {}) as Record<string, unknown>;
-        return { name: oneLine(str(item.name, 80)), price: num(item.price) };
-      })
-    : [];
+  const modulesRaw = Array.isArray(o.modules) ? o.modules : [];
+  const modules: ModuleItem[] = modulesRaw
+    .map((m) => {
+      if (!m || typeof m !== 'object') return null;
+      const item = m as Record<string, unknown>;
+      const name = str(item.name, 120);
+      const price = num(item.price);
+      if (!name) return null;
+      return { name, price };
+    })
+    .filter((m): m is ModuleItem => m !== null)
+    .slice(0, 20);
 
   return {
-    name: oneLine(str(r.name, 100)),
-    email: oneLine(str(r.email, 150)),
-    phone: oneLine(str(r.phone, 30)),
-    company: oneLine(str(r.company, 120)),
-    message: str(r.message, 2000),
-    website: str(r.website, 200),
-    project: oneLine(str(r.project, 80)),
-    projectPrice: num(r.projectPrice),
+    name: str(o.name, 120),
+    email: str(o.email, 200).toLowerCase(),
+    phone: str(o.phone, 40),
+    company: str(o.company, 120),
+    message: str(o.message, 4000),
+    website: str(o.website, 200),
+    project: str(o.project, 120),
+    projectPrice: num(o.projectPrice),
     modules,
-    total: num(r.total),
+    total: num(o.total),
   };
 }
 
 function buildText(p: Payload): string {
-  const lines = [
-    'Nueva solicitud de cotización desde kadmiel.cl',
+  const mods =
+    p.modules.length > 0
+      ? p.modules.map((m) => `  – ${m.name}: ${clp(m.price)}`).join('\n')
+      : '  (sin módulos)';
+  return [
+    'Nueva cotización desde kadmiel.cl',
     '',
-    `Proyecto: ${p.project || '—'} (${clp(p.projectPrice)})`,
-  ];
-  if (p.modules.length > 0) {
-    lines.push('Módulos adicionales:');
-    p.modules.forEach((m) => lines.push(`  - ${m.name}: ${clp(m.price)}`));
-  } else {
-    lines.push('Sin módulos adicionales');
-  }
-  lines.push(`Total estimado: ${clp(p.total)}`, '', '--- Contacto ---', `Nombre: ${p.name}`, `Correo: ${p.email}`);
-  if (p.phone) lines.push(`Teléfono: ${p.phone}`);
-  if (p.company) lines.push(`Empresa / proyecto: ${p.company}`);
-  if (p.message) lines.push('', 'Mensaje:', p.message);
-  lines.push('', '(Los valores de la cotización los informa el formulario del visitante.)');
-  return lines.join('\n');
+    `Nombre: ${p.name}`,
+    `Email: ${p.email}`,
+    p.phone ? `Teléfono: ${p.phone}` : '',
+    p.company ? `Empresa: ${p.company}` : '',
+    '',
+    `Proyecto: ${p.project} (${clp(p.projectPrice)})`,
+    'Módulos:',
+    mods,
+    '',
+    `Total estimado: ${clp(p.total)}`,
+    p.message ? `\nMensaje:\n${p.message}` : '',
+  ]
+    .filter((line) => line !== '')
+    .join('\n');
 }
 
 function buildHtml(p: Payload): string {
+  const modRows = p.modules
+    .map(
+      (m) =>
+        `<tr><td style="padding:6px 8px;border-bottom:1px solid #334155">${escapeHtml(m.name)}</td><td style="padding:6px 8px;border-bottom:1px solid #334155;text-align:right">${clp(m.price)}</td></tr>`,
+    )
+    .join('');
+
   const row = (label: string, value: string) =>
-    `<tr><td style="padding:6px 12px 6px 0;color:#64748b;vertical-align:top">${escapeHtml(label)}</td><td style="padding:6px 0;color:#0f172a">${value}</td></tr>`;
+    value
+      ? `<tr><td style="padding:8px;color:#94a3b8;vertical-align:top">${label}</td><td style="padding:8px;color:#e2e8f0">${value}</td></tr>`
+      : '';
 
-  const modules =
-    p.modules.length > 0
-      ? `<ul style="margin:0;padding-left:18px">${p.modules
-          .map((m) => `<li>${escapeHtml(m.name)}: ${escapeHtml(clp(m.price))}</li>`)
-          .join('')}</ul>`
-      : 'Sin módulos adicionales';
-
-  return `<!doctype html>
-<html lang="es"><body style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#0f172a">
-  <h2 style="margin:0 0 4px">Nueva solicitud de cotización</h2>
-  <p style="margin:0 0 16px;color:#64748b">Enviada desde el cotizador de kadmiel.cl</p>
-  <table style="border-collapse:collapse">
-    ${row('Proyecto', `${escapeHtml(p.project || '—')} (${escapeHtml(clp(p.projectPrice))})`)}
-    ${row('Módulos', modules)}
-    ${row('Total estimado', `<strong>${escapeHtml(clp(p.total))}</strong>`)}
+  return `<!DOCTYPE html><html><body style="font-family:system-ui,sans-serif;background:#0f172a;color:#e2e8f0;padding:24px">
+  <h2 style="color:#fff;margin:0 0 16px">Nueva cotización</h2>
+  <table style="width:100%;max-width:560px;border-collapse:collapse;background:#1e293b;border-radius:12px">
     ${row('Nombre', escapeHtml(p.name))}
-    ${row('Correo', `<a href="mailto:${escapeHtml(p.email)}">${escapeHtml(p.email)}</a>`)}
-    ${p.phone ? row('Teléfono', escapeHtml(p.phone)) : ''}
-    ${p.company ? row('Empresa / proyecto', escapeHtml(p.company)) : ''}
+    ${row('Email', escapeHtml(p.email))}
+    ${row('Teléfono', escapeHtml(p.phone))}
+    ${row('Empresa', escapeHtml(p.company))}
+    ${row('Proyecto', `${escapeHtml(p.project)} (${clp(p.projectPrice)})`)}
+    ${row('Total', `<strong style="color:#22d3ee">${clp(p.total)}</strong>`)}
     ${p.message ? row('Mensaje', escapeHtml(p.message).replace(/\n/g, '<br>')) : ''}
   </table>
-  <p style="margin-top:20px;color:#94a3b8;font-size:12px">Puedes responder directamente a este correo: la respuesta irá al cliente. Los valores de la cotización los informa el formulario del visitante.</p>
+  ${
+    p.modules.length
+      ? `<h3 style="margin:20px 0 8px;color:#cbd5e1">Módulos</h3><table style="width:100%;max-width:560px;border-collapse:collapse">${modRows}</table>`
+      : ''
+  }
+  <p style="margin-top:20px;color:#94a3b8;font-size:12px">Responde este correo para contactar al cliente.</p>
+</body></html>`;
+}
+
+function buildClientText(p: Payload): string {
+  const mods =
+    p.modules.length > 0
+      ? p.modules.map((m) => `  – ${m.name}: ${clp(m.price)}`).join('\n')
+      : '  (sin módulos adicionales)';
+  return [
+    `Hola ${p.name},`,
+    '',
+    'Recibimos tu solicitud de cotización en Kadmiel. Este es un resumen de lo que seleccionaste:',
+    '',
+    `Proyecto: ${p.project} (${clp(p.projectPrice)})`,
+    'Módulos:',
+    mods,
+    '',
+    `Total estimado: ${clp(p.total)}`,
+    '',
+    'Te contactaremos pronto para confirmar alcance y plazos.',
+    '',
+    '— Equipo Kadmiel',
+    'https://kadmiel.cl',
+    'WhatsApp: +56 9 4544 2388',
+  ].join('\n');
+}
+
+function buildClientHtml(p: Payload): string {
+  const rows = p.modules
+    .map(
+      (m) =>
+        `<tr><td style="padding:6px 0;color:#cbd5e1">${escapeHtml(m.name)}</td><td style="padding:6px 0;text-align:right;color:#e2e8f0">${clp(m.price)}</td></tr>`,
+    )
+    .join('');
+  return `<!DOCTYPE html><html><body style="font-family:system-ui,sans-serif;background:#0f172a;color:#e2e8f0;padding:24px">
+  <div style="max-width:520px;margin:0 auto;background:#1e293b;border-radius:16px;padding:28px;border:1px solid #334155">
+    <p style="margin:0 0 4px;font-size:12px;color:#22d3ee;font-weight:700;letter-spacing:0.08em;text-transform:uppercase">Kadmiel</p>
+    <h1 style="margin:0 0 16px;font-size:22px;color:#fff">Recibimos tu cotización</h1>
+    <p style="margin:0 0 20px;color:#94a3b8;line-height:1.5">Hola <strong style="color:#e2e8f0">${escapeHtml(p.name)}</strong>, este es el resumen de lo que seleccionaste en kadmiel.cl. Te responderemos pronto.</p>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
+      <tr><td style="padding:8px 0;color:#94a3b8">Proyecto</td><td style="padding:8px 0;text-align:right;color:#fff;font-weight:600">${escapeHtml(p.project)}</td></tr>
+      <tr><td style="padding:8px 0;color:#94a3b8">Base</td><td style="padding:8px 0;text-align:right;color:#e2e8f0">${clp(p.projectPrice)}</td></tr>
+      ${rows}
+      <tr><td style="padding:12px 0 0;border-top:1px solid #334155;color:#22d3ee;font-weight:700">Total estimado</td><td style="padding:12px 0 0;border-top:1px solid #334155;text-align:right;color:#22d3ee;font-weight:800;font-size:18px">${clp(p.total)}</td></tr>
+    </table>
+    <p style="margin:20px 0 0;font-size:13px;color:#64748b">Si tienes dudas, responde este correo o escríbenos por WhatsApp al +56 9 4544 2388.</p>
+  </div>
 </body></html>`;
 }
 
 export const onRequestPost = async (context: Context): Promise<Response> => {
   const { request, env } = context;
 
-  // Solo desde el propio sitio (evita que otros orígenes usen el endpoint)
   const origin = request.headers.get('Origin');
   if (origin) {
     let originHost = '';
@@ -189,7 +239,6 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
   }
   if (!payload) return json({ error: 'invalid' }, 400);
 
-  // Honeypot: un bot rellenó el campo oculto. Respondemos "ok" sin enviar nada.
   if (payload.website) return json({ ok: true });
 
   if (payload.name.length < 2 || !EMAIL_RE.test(payload.email)) {
@@ -225,7 +274,6 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
     }
   }
 
-  // 1) Aviso interno (Kadmiel)
   const okInternal = await sendResend({
     from,
     to: [toInternal],
@@ -239,7 +287,6 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
     return json({ error: 'send_failed' }, 502);
   }
 
-  // 2) Copia de confirmación al cliente (no bloquea si falla)
   await sendResend({
     from,
     to: [payload.email],
@@ -252,7 +299,6 @@ export const onRequestPost = async (context: Context): Promise<Response> => {
   return json({ ok: true });
 };
 
-/** Cualquier método distinto de POST responde 405 (POST usa onRequestPost). */
 export const onRequest = async (): Promise<Response> =>
   new Response(JSON.stringify({ error: 'method_not_allowed' }), {
     status: 405,
