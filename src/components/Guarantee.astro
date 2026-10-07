@@ -21,6 +21,27 @@ const guarantees = [
     desc: 'Te dejamos el sitio publicado, con instrucciones y un período de ajustes incluidos para que quedes conforme.',
   },
 ];
+
+const nextSteps = [
+  {
+    title: 'Elige lo que necesitas',
+    desc: 'Landing, sitio de empresa, catálogo o redes. En segundos ves un valor orientativo.',
+    cta: 'Ver opciones',
+    href: '#cotizador',
+  },
+  {
+    title: 'Revisa el total',
+    desc: 'Precio claro en pesos chilenos. Sin sorpresas ni cotizaciones genéricas.',
+    cta: 'Ir al cotizador',
+    href: '#cotizador',
+  },
+  {
+    title: 'Escríbenos',
+    desc: 'Te enviamos el resumen por WhatsApp y te respondemos en menos de un día.',
+    cta: 'Hablar por WhatsApp',
+    href: 'https://wa.me/56945422388?text=Hola!%20Quiero%20cotizar%20un%20proyecto%20con%20Kadmiel',
+  },
+];
 ---
 
 <section id="garantias" class="py-24 bg-[#090d16] border-t border-slate-800/80">
@@ -31,10 +52,13 @@ const guarantees = [
       <p class="mt-3 text-slate-400 text-base">Menos fricción, más claridad. Así cerramos proyectos que sí generan resultados.</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-14">
-      {guarantees.map((g) => (
-        <div class="flex gap-4 rounded-2xl border border-slate-800 bg-slate-900/50 p-6 hover:border-emerald-500/30 transition-colors">
-          <div class="text-3xl shrink-0" aria-hidden="true">{g.icon}</div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+      {guarantees.map((g, i) => (
+        <div
+          class="g-card flex gap-4 rounded-2xl border border-slate-800 bg-slate-900/50 p-6 hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/5"
+          style={`animation-delay: ${i * 80}ms`}
+        >
+          <div class="g-icon text-3xl shrink-0" aria-hidden="true">{g.icon}</div>
           <div>
             <h3 class="text-lg font-bold text-white">{g.title}</h3>
             <p class="mt-1.5 text-sm text-slate-400 leading-relaxed">{g.desc}</p>
@@ -43,27 +67,274 @@ const guarantees = [
       ))}
     </div>
 
-    <!-- CTA final fuerte -->
-    <div class="relative overflow-hidden rounded-3xl border border-violet-500/30 bg-gradient-to-br from-violet-600/20 via-slate-900 to-cyan-600/15 p-8 md:p-12 text-center">
-      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(139,92,246,0.15),_transparent_60%)] pointer-events-none"></div>
-      <div class="relative z-10 max-w-2xl mx-auto">
-        <p class="text-xs font-bold text-cyan-300 uppercase tracking-widest mb-3">Siguiente paso</p>
-        <h3 class="text-2xl md:text-3xl font-extrabold text-white leading-tight">
-          Calcula tu inversión en 30 segundos y escríbenos con el detalle listo
-        </h3>
-        <p class="mt-3 text-slate-300 text-sm md:text-base">
-          Sin formularios eternos. Eliges opciones → total en CLP → mensaje a WhatsApp con el resumen.
-        </p>
-        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <a
-            href="#cotizador"
-            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 text-white font-extrabold text-base shadow-xl shadow-violet-600/30 hover:scale-[1.03] transition-all"
-          >
-            Ir a la calculadora
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
-          </a>
+    <div class="next-min relative rounded-3xl border border-slate-800 bg-slate-900/40 p-8 md:p-12 overflow-hidden">
+      <div class="nm-bg" aria-hidden="true">
+        <div class="nm-glow"></div>
+        <div class="nm-orb nm-orb-a"></div>
+        <div class="nm-orb nm-orb-b"></div>
+        <div class="nm-grid"></div>
+        <div class="nm-beam"></div>
+      </div>
+
+      <div class="relative z-10 max-w-xl mx-auto text-center">
+        <p class="text-xs font-bold text-cyan-400/90 uppercase tracking-widest mb-6 nm-label">Siguiente paso</p>
+
+        <!-- Barra de progreso del ciclo -->
+        <div class="h-0.5 w-full max-w-[12rem] mx-auto mb-8 rounded-full bg-slate-800 overflow-hidden">
+          <div id="nm-progress" class="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400" style="width: 0%"></div>
+        </div>
+
+        <div class="flex items-center justify-center gap-2 mb-8" id="nm-dots" role="tablist">
+          {nextSteps.map((_, i) => (
+            <button
+              type="button"
+              class="nm-dot h-2 rounded-full transition-all duration-300 bg-slate-600 w-2"
+              data-index={i}
+              aria-label={`Paso ${i + 1}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+            />
+          ))}
+        </div>
+
+        <div class="relative min-h-[180px]" id="nm-stage">
+          {nextSteps.map((s, i) => (
+            <div
+              class={`nm-slide absolute inset-0 flex flex-col items-center justify-center ${i === 0 ? 'is-active' : ''}`}
+              data-index={i}
+            >
+              <p class="nm-num text-xs text-slate-500 mb-2">{i + 1} / {nextSteps.length}</p>
+              <h3 class="nm-title text-2xl md:text-3xl font-extrabold text-white mb-3">{s.title}</h3>
+              <p class="nm-desc text-slate-400 text-base leading-relaxed mb-8 max-w-md">{s.desc}</p>
+              <a
+                href={s.href}
+                target={s.href.startsWith('http') ? '_blank' : undefined}
+                rel={s.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                class="nm-cta inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-white text-slate-900 font-bold text-sm hover:bg-cyan-300 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-cyan-400/20"
+              >
+                {s.cta}
+                <svg class="w-4 h-4 nm-cta-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </a>
+            </div>
+          ))}
+        </div>
+
+        <div class="flex items-center justify-center gap-4 mt-10">
+          <button type="button" id="nm-prev" aria-label="Anterior" class="nm-nav text-slate-500 hover:text-white transition-colors text-sm font-medium">← Anterior</button>
+          <span class="text-slate-700">·</span>
+          <button type="button" id="nm-next" aria-label="Siguiente" class="nm-nav text-slate-500 hover:text-white transition-colors text-sm font-medium">Siguiente →</button>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+  .g-card {
+    animation: gIn 0.5s ease-out both;
+  }
+  @keyframes gIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .g-icon {
+    transition: transform 0.35s ease;
+  }
+  .g-card:hover .g-icon {
+    transform: scale(1.15) rotate(-6deg);
+  }
+
+  .nm-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    border-radius: inherit;
+  }
+  .nm-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(139, 92, 246, 0.14), transparent 55%);
+    animation: nmGlow 7s ease-in-out infinite alternate;
+  }
+  @keyframes nmGlow {
+    from { opacity: 0.5; }
+    to { opacity: 1; }
+  }
+  .nm-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.45;
+  }
+  .nm-orb-a {
+    width: 220px;
+    height: 220px;
+    top: -60px;
+    left: 10%;
+    background: rgba(139, 92, 246, 0.35);
+    animation: nmOrbA 12s ease-in-out infinite alternate;
+  }
+  .nm-orb-b {
+    width: 260px;
+    height: 260px;
+    bottom: -80px;
+    right: 8%;
+    background: rgba(34, 211, 238, 0.25);
+    animation: nmOrbB 14s ease-in-out infinite alternate;
+  }
+  @keyframes nmOrbA {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(40px, 30px) scale(1.15); }
+  }
+  @keyframes nmOrbB {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(-50px, -20px) scale(1.2); }
+  }
+  .nm-grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.12;
+    background-image:
+      linear-gradient(rgba(148, 163, 184, 0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.15) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+  }
+  .nm-beam {
+    position: absolute;
+    top: 0;
+    left: -40%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.08), transparent);
+    animation: nmBeam 8s ease-in-out infinite;
+  }
+  @keyframes nmBeam {
+    0% { transform: translateX(0); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateX(350%); opacity: 0; }
+  }
+
+  .nm-label {
+    animation: fadeUp 0.5s ease-out both;
+  }
+
+  #nm-progress {
+    transition: width 0.1s linear;
+  }
+
+  .nm-slide {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px) scale(0.97);
+    pointer-events: none;
+    transition:
+      opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0.45s;
+  }
+  .nm-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+  .nm-slide.is-active .nm-title {
+    animation: fadeUp 0.45s ease-out both;
+    animation-delay: 0.05s;
+  }
+  .nm-slide.is-active .nm-desc {
+    animation: fadeUp 0.45s ease-out both;
+    animation-delay: 0.12s;
+  }
+  .nm-slide.is-active .nm-cta {
+    animation: fadeUp 0.45s ease-out both;
+    animation-delay: 0.2s;
+  }
+  .nm-slide.is-active .nm-num {
+    animation: fadeUp 0.4s ease-out both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .nm-cta:hover .nm-cta-arrow {
+    animation: arrowNudge 0.6s ease-in-out infinite;
+  }
+  @keyframes arrowNudge {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(4px); }
+  }
+
+  .nm-dot {
+    cursor: pointer;
+  }
+  .nm-dot:hover {
+    background: #94a3b8;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .g-card, .nm-glow, .nm-orb, .nm-beam, .nm-slide, .nm-slide.is-active .nm-title,
+    .nm-slide.is-active .nm-desc, .nm-slide.is-active .nm-cta,
+    .nm-slide.is-active .nm-num, .nm-cta-arrow {
+      animation: none !important;
+      transition: none !important;
+    }
+    .nm-slide { opacity: 0; }
+    .nm-slide.is-active { opacity: 1; transform: none; }
+  }
+</style>
+
+<script>
+  const slides = document.querySelectorAll('.nm-slide');
+  const dots = document.querySelectorAll('.nm-dot');
+  const prev = document.getElementById('nm-prev');
+  const next = document.getElementById('nm-next');
+  const progress = document.getElementById('nm-progress');
+  let idx = 0;
+  let timer: ReturnType<typeof setInterval> | null = null;
+  let progTimer: ReturnType<typeof setInterval> | null = null;
+  const total = slides.length;
+  const CYCLE = 4500;
+
+  function go(i: number) {
+    idx = ((i % total) + total) % total;
+    slides.forEach((s, si) => {
+      s.classList.toggle('is-active', si === idx);
+    });
+    dots.forEach((d, di) => {
+      d.setAttribute('aria-selected', di === idx ? 'true' : 'false');
+      d.className = di === idx
+        ? 'nm-dot h-2 rounded-full transition-all duration-300 bg-cyan-400 w-6'
+        : 'nm-dot h-2 rounded-full transition-all duration-300 bg-slate-600 w-2';
+    });
+    resetProgress();
+  }
+
+  function resetProgress() {
+    if (!progress) return;
+    if (progTimer) clearInterval(progTimer);
+    progress.style.transition = 'none';
+    progress.style.width = '0%';
+    progress.offsetHeight;
+    progress.style.transition = `width ${CYCLE}ms linear`;
+    progress.style.width = '100%';
+  }
+
+  function startAuto() {
+    if (timer) clearInterval(timer);
+    resetProgress();
+    timer = setInterval(() => go(idx + 1), CYCLE);
+  }
+
+  dots.forEach((d) => d.addEventListener('click', () => { go(parseInt(d.getAttribute('data-index') || '0', 10)); startAuto(); }));
+  prev?.addEventListener('click', () => { go(idx - 1); startAuto(); });
+  next?.addEventListener('click', () => { go(idx + 1); startAuto(); });
+
+  go(0);
+  startAuto();
+</script>
