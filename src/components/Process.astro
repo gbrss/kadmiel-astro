@@ -4,21 +4,49 @@ const steps = [
     num: '01',
     title: 'Diagnóstico y cotización',
     desc: 'Eliges el tipo de proyecto en la calculadora o nos escribes por WhatsApp. En menos de 24 h te confirmamos alcance y precio cerrado.',
+    details: [
+      'Calculadora online con precios transparentes en CLP',
+      'Respuesta por WhatsApp en menos de 24 horas',
+      'Alcance y precio cerrado por escrito',
+      'Sin letra chica ni cobros sorpresa',
+    ],
+    tip: 'Ideal si ya sabes si necesitas landing, corporativo o catálogo.',
   },
   {
     num: '02',
     title: 'Diseño y estructura',
     desc: 'Definimos secciones, mensajes y prioridades de conversión. Tú apruebas antes de programar: cero sorpresas.',
+    details: [
+      'Mapa de secciones y jerarquía de mensajes',
+      'Foco en conversión (CTAs, formularios, WhatsApp)',
+      'Aprobación tuya antes de escribir código',
+      'Ajustes de copy y layout incluidos en esta etapa',
+    ],
+    tip: 'Aquí se decide qué verá el visitante y en qué orden.',
   },
   {
     num: '03',
     title: 'Desarrollo con Astro',
     desc: 'Construimos HTML estático ultrarrápido, SEO técnico, formularios y módulos que pediste. Optimizamos imágenes y Core Web Vitals.',
+    details: [
+      'Astro: HTML estático, mínimo JavaScript',
+      'SEO técnico: meta, headings, velocidad',
+      'Imágenes optimizadas y Core Web Vitals',
+      'Módulos: chatbot, formularios, catálogo, etc.',
+    ],
+    tip: 'El objetivo: 95–100 en PageSpeed y carga sub-segundo.',
   },
   {
     num: '04',
     title: 'Entrega y soporte',
     desc: 'Publicamos en tu dominio, te capacitamos y dejamos soporte post-entrega. Medimos PageSpeed real antes de cerrar.',
+    details: [
+      'Publicación en tu dominio (DNS / hosting)',
+      'Capacitación breve para editar o gestionar',
+      'Medición real de PageSpeed antes de cerrar',
+      'Soporte post-entrega para ajustes menores',
+    ],
+    tip: 'Quedas con el sitio online y con respaldo si surge algo.',
   },
 ];
 ---
@@ -28,35 +56,58 @@ const steps = [
     <div class="text-center max-w-3xl mx-auto mb-14">
       <h2 class="text-xs font-bold text-cyan-400 tracking-widest uppercase mb-3">Proceso claro</h2>
       <p class="text-3xl md:text-4xl font-extrabold text-white">De la idea al sitio online en 4 pasos</p>
-      <p class="mt-3 text-slate-400 text-base">Sin rodeos. Sabes qué pasa, cuándo y cuánto cuesta.</p>
+      <p class="mt-3 text-slate-400 text-base">Sin rodeos. Sabes qué pasa, cuándo y cuánto cuesta. <span class="text-slate-500">Pasa el mouse o toca una tarjeta.</span></p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative" style="overflow: visible;">
       {steps.map((s, i) => (
-        <div class="relative rounded-2xl border border-slate-800 bg-slate-900/50 p-6 hover:border-violet-500/40 transition-colors">
-          <span class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-violet-500/40 to-cyan-500/30">{s.num}</span>
+        <div
+          class="step-card relative rounded-2xl border border-slate-800 bg-slate-900/50 p-6 transition-all duration-300 hover:border-violet-500/50 hover:bg-slate-900 cursor-pointer"
+          data-step={s.num}
+          tabindex="0"
+          role="button"
+          aria-expanded="false"
+          style="overflow: visible;"
+        >
+          <span class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-violet-500/50 to-cyan-500/40">{s.num}</span>
           <h3 class="mt-3 text-lg font-bold text-white">{s.title}</h3>
           <p class="mt-2 text-sm text-slate-400 leading-relaxed">{s.desc}</p>
+          <p class="mt-3 text-xs font-semibold text-cyan-400/70 flex items-center gap-1">
+            Más info
+            <svg class="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+          </p>
+
+          <!-- Popover flotante hacia ARRIBA -->
+          <div class="step-pop" role="tooltip">
+            <div class="step-pop-inner">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-violet-300 mb-2">Detalle del paso</p>
+              <ul class="space-y-2">
+                {s.details.map((d) => (
+                  <li class="flex items-start gap-2 text-sm text-slate-200">
+                    <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+                    <span>{d}</span>
+                  </li>
+                ))}
+              </ul>
+              <p class="mt-3 text-xs text-slate-500 italic border-t border-slate-700/80 pt-3">{s.tip}</p>
+            </div>
+            <!-- flecha hacia la card -->
+            <span class="step-pop-arrow" aria-hidden="true"></span>
+          </div>
+
           {i < steps.length - 1 && (
-            <div class="hidden lg:block absolute top-1/2 -right-3 w-6 h-px bg-gradient-to-r from-violet-500/50 to-transparent" aria-hidden="true"></div>
+            <div class="hidden lg:block absolute top-1/2 -right-3 w-6 h-px bg-gradient-to-r from-violet-500/50 to-transparent z-0" aria-hidden="true"></div>
           )}
         </div>
       ))}
     </div>
 
     <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-      <a
-        href="#cotizador"
-        class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 text-white font-extrabold shadow-lg shadow-violet-600/30 hover:scale-[1.03] transition-all"
-      >
+      <a href="#cotizador" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-500 text-white font-extrabold shadow-lg shadow-violet-600/30 hover:scale-[1.03] transition-all">
         Empezar ahora — ver precios
       </a>
-      <a
-        href="https://wa.me/56945422388?text=Hola!%20Quiero%20hablar%20sobre%20un%20proyecto%20web%20con%20Kadmiel"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 px-6 py-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 font-semibold hover:bg-emerald-500/20 transition-all"
-      >
+      <a href="https://wa.me/56945422388?text=Hola!%20Quiero%20hablar%20sobre%20un%20proyecto%20web%20con%20Kadmiel" target="_blank" rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 px-6 py-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 font-semibold hover:bg-emerald-500/20 transition-all">
         <svg class="w-5 h-5" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
           <path d="M16.001 2.002c-7.713 0-13.975 6.262-13.975 13.975 0 2.465.643 4.868 1.865 6.99L2 30l7.2-1.886a13.92 13.92 0 006.801 1.735h.006c7.713 0 13.975-6.262 13.975-13.975S23.714 2.002 16.001 2.002zm0 25.54a11.54 11.54 0 01-5.88-1.605l-.421-.25-4.42 1.158 1.18-4.31-.274-.442a11.55 11.55 0 01-1.777-6.116c0-6.38 5.193-11.573 11.574-11.573 6.38 0 11.573 5.193 11.573 11.573 0 6.381-5.193 11.565-11.555 11.565z"/>
         </svg>
@@ -65,3 +116,98 @@ const steps = [
     </div>
   </div>
 </section>
+
+<style>
+  .step-pop {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(100% + 12px);
+    z-index: 30;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px) scale(0.98);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    pointer-events: none;
+  }
+
+  .step-pop-inner {
+    border-radius: 1rem;
+    border: 1px solid rgba(139, 92, 246, 0.45);
+    background: #0f172a;
+    padding: 1rem 1.15rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(139, 92, 246, 0.1);
+  }
+
+  .step-pop-arrow {
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
+    background: #0f172a;
+    border-right: 1px solid rgba(139, 92, 246, 0.45);
+    border-bottom: 1px solid rgba(139, 92, 246, 0.45);
+    transform: rotate(45deg);
+  }
+
+  /* Desktop: hover / focus */
+  @media (hover: hover) and (pointer: fine) {
+    .step-card:hover .step-pop,
+    .step-card:focus-within .step-pop {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+  }
+
+  /* Móvil / touch: clase is-open */
+  .step-card.is-open .step-pop {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  .step-card.is-open {
+    border-color: rgba(139, 92, 246, 0.5);
+    background: rgba(15, 23, 42, 0.95);
+  }
+
+  /* Evitar que overflow del grid recorte el popover */
+  #proceso .grid {
+    overflow: visible;
+  }
+</style>
+
+<script>
+  const cards = document.querySelectorAll('.step-card');
+
+  cards.forEach((card) => {
+    card.addEventListener('click', (e) => {
+      // En desktop con hover no hace falta; en touch/móvil sí
+      const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if (fine) return;
+
+      e.stopPropagation();
+      const open = card.classList.contains('is-open');
+      cards.forEach((c) => {
+        c.classList.remove('is-open');
+        c.setAttribute('aria-expanded', 'false');
+      });
+      if (!open) {
+        card.classList.add('is-open');
+        card.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  document.addEventListener('click', () => {
+    cards.forEach((c) => {
+      c.classList.remove('is-open');
+      c.setAttribute('aria-expanded', 'false');
+    });
+  });
+</script>
