@@ -14,10 +14,31 @@
         <div>
           <label class="block text-slate-300 text-sm font-bold mb-3">1. Tipo de Proyecto Web:</label>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" role="group" aria-label="Tipo de proyecto">
-            <button type="button" class="type-btn active border-2 border-violet-500 bg-violet-500/10 p-4 rounded-xl text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400" data-price="150000" data-type="Landing Page" aria-pressed="true">
+            
+            <!-- TARJETA PROMO ACTIVA POR DEFECTO -->
+            <button type="button" class="type-btn active lg:col-span-3 border-2 border-violet-500 bg-violet-500/10 p-5 rounded-xl text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4" data-price="45990" data-type="Promoción Pyme Sitio Web (Inicial $45.990 + $25.000/mes)" aria-pressed="true">
+              
+              <!-- Etiqueta de oferta -->
+              <div class="absolute top-0 right-0 bg-violet-600 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider z-10">
+                Oferta Especial
+              </div>
+
+              <div class="flex-1 pr-16 md:pr-0">
+                <span class="block text-white font-bold text-lg">Promoción Pyme Sitio Web</span>
+                <span class="block text-xs text-slate-400 mt-1">Incluye dominio y primer mes de servicio.</span>
+              </div>
+              
+              <!-- Precio en violeta por estar activo -->
+              <span class="block text-violet-300 text-sm font-semibold md:text-right w-full md:w-auto mt-2 md:mt-0">
+                $25.000 mensuales / $45.990 inicial
+              </span>
+            </button>
+
+            <!-- Las 9 tarjetas originales (Landing Page ya NO está activa por defecto) -->
+            <button type="button" class="type-btn border-2 border-slate-800 hover:border-slate-700 p-4 rounded-xl text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400" data-price="150000" data-type="Landing Page" aria-pressed="false">
               <span class="block text-white font-bold text-base">Landing Page</span>
               <span class="block text-xs text-slate-400 mt-1">Una página enfocada en conversión y campañas.</span>
-              <span class="block text-violet-300 text-sm font-semibold mt-2">$150.000</span>
+              <span class="block text-slate-400 text-sm font-semibold mt-2">$150.000</span>
             </button>
             <button type="button" class="type-btn border-2 border-slate-800 hover:border-slate-700 p-4 rounded-xl text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400" data-price="250000" data-type="Sitio Corporativo" aria-pressed="false">
               <span class="block text-white font-bold text-base">Sitio Corporativo</span>
@@ -154,11 +175,12 @@
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div class="flex-1 min-w-0">
               <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Inversión Estimada (CLP)</span>
+              <!-- VALORES INICIALES ACTUALIZADOS A LA PROMO -->
               <div id="total-price" class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400 mt-1">
-                $150.000 CLP
+                $45.990 CLP
               </div>
               <p id="quote-summary" class="mt-2 text-sm text-slate-400 leading-relaxed">
-                Landing Page
+                Promoción Pyme Sitio Web (Inicial $45.990 + $25.000/mes)
               </p>
             </div>
             <div class="flex flex-col gap-3 w-full md:w-auto shrink-0">
@@ -206,10 +228,11 @@
                     </p>
                   </div>
 
+                  <!-- VALORES INICIALES ACTUALIZADOS A LA PROMO -->
                   <div class="mb-6 rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3">
                     <span class="text-[11px] font-bold uppercase tracking-widest text-slate-500">Tu selección</span>
-                    <p id="form-selection" class="mt-0.5 text-sm text-slate-200">Landing Page</p>
-                    <p id="form-total" class="text-sm font-bold text-violet-300 tabular-nums">$150.000 CLP</p>
+                    <p id="form-selection" class="mt-0.5 text-sm text-slate-200">Promoción Pyme Sitio Web (Inicial $45.990 + $25.000/mes)</p>
+                    <p id="form-total" class="text-sm font-bold text-violet-300 tabular-nums">$45.990 CLP</p>
                   </div>
 
                   <form id="quote-form" class="space-y-4" autocomplete="on">
@@ -356,10 +379,11 @@
 </style>
 
 <script>
-  const PHONE = '56945422388'; // sin + ni espacios (formato wa.me)
+  const PHONE = '56962206148'; // sin + ni espacios (formato wa.me)
 
-  let basePrice = 150000;
-  let selectedType = 'Landing Page';
+  // VARIABLES INICIALES ACTUALIZADAS A LA PROMO
+  let basePrice = 45990;
+  let selectedType = 'Promoción Pyme Sitio Web (Inicial $45.990 + $25.000/mes)';
 
   const typeBtns = document.querySelectorAll('.type-btn');
   const modChecks = document.querySelectorAll('.mod-check');
