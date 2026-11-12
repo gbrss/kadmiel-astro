@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@theme {
+  --color-kadmiel-bg: #090d16;
+  --color-kadmiel-card: #111827;
+  --color-kadmiel-accent: #8b5cf6;
+  --color-kadmiel-cyan: #06b6d4;
+  --color-kadmiel-gold: #f59e0b;
+}
