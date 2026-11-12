@@ -6,14 +6,15 @@ export default defineConfig({
     port: 3000,
   },
   build: {
-    inlineStylesheets: 'auto',
+    // Fuerza a que TODO el CSS se incruste en el HTML para eliminar el bloqueo de renderizado
+    inlineStylesheets: 'always',
   },
   vite: {
     plugins: [tailwindcss()],
     build: {
       minify: 'esbuild',
       cssMinify: 'lightningcss',
-      target: 'es2022', // Evita JavaScript heredado
+      target: 'es2022',
     }
   },
 });

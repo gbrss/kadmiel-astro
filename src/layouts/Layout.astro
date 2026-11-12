@@ -1,7 +1,6 @@
 ---
 import '@fontsource-variable/plus-jakarta-sans';
 import '../styles/global.css';
-// Importamos la URL de la fuente para poder precargarla
 import fontUrl from '@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2?url';
 
 interface Props {
@@ -22,14 +21,14 @@ const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		
-		<!-- PRECARGA DE LA FUENTE (Elimina el parpadeo) -->
+		<!-- Precarga de la fuente local -->
 		<link rel="preload" href={fontUrl} as="font" type="font/woff2" crossorigin />
 	</head>
 	<body class="bg-kadmiel-bg text-slate-100 font-sans antialiased selection:bg-purple-500 selection:text-white">
 		<slot />
 		
 		<script>
-			// Reveal al scroll
+			// Reveal al scroll (excluye el Hero para no afectar el LCP)
 			const targets = document.querySelectorAll(
 				'main > section:not(:first-child), footer, .reveal, .stat-card, .pf-card, #ventajas > div > div > div, #comparativa table, #proceso .grid > div, #garantias .grid > div'
 			);

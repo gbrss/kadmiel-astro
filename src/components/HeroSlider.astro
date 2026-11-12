@@ -26,8 +26,11 @@
         +40 sitios entregados · 100/100 PageSpeed
       </div>
 
-      <!-- H1 SÓLIDO PARA ASEGURAR EL LCP -->
-      <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[1.1] tracking-tight min-h-40 text-white">
+      <!-- H1 Optimizado para detección inmediata de LCP -->
+      <h1 
+        class="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[1.1] tracking-tight min-h-40 text-white"
+        style="content-visibility: auto; contain-intrinsic-size: 1px 200px;"
+      >
         Tu web en <span class="text-cyan-400">menos de 1 segundo</span>
         <span class="block mt-2 text-slate-200">o pierdes clientes cada día</span>
       </h1>
@@ -241,19 +244,16 @@
     });
   };
 
+  // OPTIMIZACIÓN EXTREMA: El canvas solo se carga cuando el usuario hace scroll
   let canvasLoaded = false;
   const loadCanvas = () => {
     if (!canvasLoaded) {
       canvasLoaded = true;
       initCanvas();
-      window.removeEventListener('scroll', loadCanvas);
-      window.removeEventListener('mousemove', loadCanvas);
-      window.removeEventListener('touchstart', loadCanvas);
     }
   };
 
   window.addEventListener('scroll', loadCanvas, { passive: true, once: true });
-  window.addEventListener('mousemove', loadCanvas, { passive: true, once: true });
-  window.addEventListener('touchstart', loadCanvas, { passive: true, once: true });
-  setTimeout(loadCanvas, 4000);
+  // Respaldo por si el usuario no hace scroll, para que no se quede sin animación
+  setTimeout(loadCanvas, 5000); 
 </script>
