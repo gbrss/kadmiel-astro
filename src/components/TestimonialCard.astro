@@ -54,16 +54,13 @@ const initials = t.name
   class="reveal testi-card group relative flex h-full flex-col rounded-2xl border border-slate-800 bg-slate-900/60 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/40 hover:bg-slate-900"
   style={`--glow: ${h.glow};`}
 >
-  <!-- Glow al hover -->
   <div class="testi-glow pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" aria-hidden="true"></div>
 
-  <!-- Comilla decorativa -->
   <svg class="absolute right-5 top-5 h-8 w-8 text-slate-700/70 transition-colors duration-300 group-hover:text-violet-500/40" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M9.4 5C5.9 6.6 3.5 9.8 3.5 14v5h6.6v-6.2H6.9c0-2.3 1.2-4 3.3-5.1L9.4 5zm9 0c-3.5 1.6-5.9 4.8-5.9 9v5h6.6v-6.2h-3.2c0-2.3 1.2-4 3.3-5.1L18.4 5z"/>
   </svg>
 
   <div class="relative flex flex-1 flex-col">
-    <!-- Estrellas -->
     <div class="mb-4 flex items-center gap-0.5" role="img" aria-label={`${t.rating} de 5 estrellas`}>
       {Array.from({ length: 5 }).map((_, s) => (
         <svg
@@ -94,7 +91,7 @@ const initials = t.name
 
     <figcaption class="mt-auto flex items-center gap-3 border-t border-slate-800 pt-5">
       <div
-        class={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${h.avatar} text-sm font-black text-white shadow-lg`}
+        class={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-linear-to-br ${h.avatar} text-sm font-black text-white shadow-lg`}
         aria-hidden="true"
       >
         {initials}

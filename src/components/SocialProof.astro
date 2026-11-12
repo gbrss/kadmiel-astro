@@ -60,7 +60,7 @@ const painPoints = [
 ];
 ---
 
-<section class="py-20 bg-[#090d16] border-t border-slate-800/80 overflow-hidden">
+<section class="py-20 bg-kadmiel-bg border-t border-slate-800/80 overflow-hidden">
   <div class="max-w-7xl mx-auto px-6">
     <!-- Stats bar -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-16" id="stats-grid">
@@ -74,11 +74,9 @@ const painPoints = [
           data-from={s.type === 'range' ? s.from : undefined}
           data-to={s.type === 'range' ? s.to : undefined}
         >
-          <!-- Glow sutil al hover -->
-          <div class="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.12),_transparent_70%)]"></div>
+          <div class="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.12),transparent_70%)]"></div>
 
-          <!-- Icono animado -->
-          <div class="stat-icon relative mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/20 to-cyan-500/15 border border-violet-500/20 text-cyan-300">
+          <div class="stat-icon relative mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-violet-500/20 to-cyan-500/15 border border-violet-500/20 text-cyan-300">
             {s.icon === 'gauge' && (
               <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 14a2 2 0 100-4 2 2 0 000 4z"/>
@@ -106,7 +104,7 @@ const painPoints = [
           </div>
 
           <div class="relative">
-            <div class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400 tabular-nums">
+            <div class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-linear-to-r from-violet-400 to-cyan-400 tabular-nums">
               {s.type === 'static' ? (
                 <span>
                   {s.display}<span class="text-lg md:text-xl font-bold text-cyan-300/80">{s.suffix}</span>
@@ -174,7 +172,6 @@ const painPoints = [
 </section>
 
 <style>
-  /* Flotación suave escalonada */
   .stat-card {
     animation: floatIn 0.7s ease-out both, floatY 4.5s ease-in-out infinite;
   }
@@ -184,14 +181,8 @@ const painPoints = [
   .stat-card:nth-child(4) { animation-delay: 240ms, 1.8s; }
 
   @keyframes floatIn {
-    from {
-      opacity: 0;
-      transform: translateY(24px) scale(0.96);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
+    from { opacity: 0; transform: translateY(24px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
   }
 
   @keyframes floatY {
@@ -220,9 +211,7 @@ const painPoints = [
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .stat-card,
-    .stat-icon,
-    .icon-pulse {
+    .stat-card, .stat-icon, .icon-pulse {
       animation: none !important;
     }
   }
@@ -233,12 +222,7 @@ const painPoints = [
     return 1 - Math.pow(1 - t, 3);
   }
 
-  function animateCount(
-    el: HTMLElement,
-    to: number,
-    duration = 1400,
-    onUpdate?: (n: number) => void
-  ) {
+  function animateCount(el: HTMLElement, to: number, duration = 1400, onUpdate?: (n: number) => void) {
     const start = performance.now();
     const from = 0;
 
@@ -271,20 +255,16 @@ const painPoints = [
     });
   }
 
-  // Solo animar cuando la sección entra en viewport
   const grid = document.getElementById('stats-grid');
   if (grid && 'IntersectionObserver' in window) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            runStats();
-            io.disconnect();
-          }
-        });
-      },
-      { threshold: 0.25 }
-    );
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          runStats();
+          io.disconnect();
+        }
+      });
+    }, { threshold: 0.25 });
     io.observe(grid);
   } else {
     runStats();

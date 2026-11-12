@@ -9,10 +9,10 @@ const extra = testimonials.slice(VISIBLE);
 const average = testimonials.reduce((sum, t) => sum + t.rating, 0) / testimonials.length;
 ---
 
-<section id="testimonios" class="relative py-24 bg-[#090d16] border-t border-slate-800/80 overflow-hidden">
+<section id="testimonios" class="relative py-24 bg-kadmiel-bg border-t border-slate-800/80 overflow-hidden">
   <!-- Resplandores de fondo -->
-  <div class="pointer-events-none absolute -top-24 left-1/4 h-[420px] w-[420px] rounded-full bg-violet-600/10 blur-[130px]" aria-hidden="true"></div>
-  <div class="pointer-events-none absolute bottom-0 right-1/4 h-[360px] w-[360px] rounded-full bg-cyan-500/10 blur-[120px]" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute -top-24 left-1/4 h-105 w-105 rounded-full bg-violet-600/10 blur-[130px]" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute bottom-0 right-1/4 h-90 w-90 rounded-full bg-cyan-500/10 blur-[120px]" aria-hidden="true"></div>
 
   <div class="relative max-w-7xl mx-auto px-6">
     <!-- Encabezado -->
@@ -66,7 +66,7 @@ const average = testimonials.reduce((sum, t) => sum + t.rating, 0) / testimonial
           aria-controls="testi-extra"
           data-more={`Ver ${extra.length} testimonios más`}
           data-less="Mostrar menos"
-          class="group inline-flex items-center gap-2.5 rounded-xl border border-slate-700 bg-slate-900/80 px-6 py-3 text-sm font-bold text-slate-200 backdrop-blur transition-all hover:border-violet-500/50 hover:bg-slate-900 hover:text-white hover:shadow-lg hover:shadow-violet-500/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
+          class="group inline-flex items-center gap-2.5 rounded-xl border border-slate-700 bg-slate-900/80 px-6 py-3 text-sm font-bold text-slate-200 backdrop-blur transition-all hover:border-violet-500/50 hover:bg-slate-900 hover:text-white hover:shadow-lg hover:shadow-violet-500/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
         >
           <span id="testi-toggle-label">Ver {extra.length} testimonios más</span>
           <svg
@@ -88,7 +88,7 @@ const average = testimonials.reduce((sum, t) => sum + t.rating, 0) / testimonial
     <div class="mt-12 text-center">
       <a
         href="#cotizador"
-        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 px-8 py-4 text-base font-extrabold text-white shadow-xl shadow-violet-600/30 transition-all hover:scale-105"
+        class="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-violet-600 via-indigo-600 to-cyan-500 px-8 py-4 text-base font-extrabold text-white shadow-xl shadow-violet-600/30 transition-all hover:scale-105"
       >
         Quiero un resultado así
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -116,7 +116,6 @@ const average = testimonials.reduce((sum, t) => sum + t.rating, 0) / testimonial
   .testi-extra-inner {
     overflow: hidden;
     min-height: 0;
-    /* margen para que el hover (translateY) y las sombras no se recorten */
     margin: 0 -0.5rem;
     padding: 0 0.5rem;
   }
@@ -145,7 +144,6 @@ const average = testimonials.reduce((sum, t) => sum + t.rating, 0) / testimonial
       label!.textContent = open ? toggle!.dataset.less ?? '' : toggle!.dataset.more ?? '';
       icon!.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
 
-      // inert + aria-hidden: lo oculto no es enfocable ni se anuncia
       if (open) {
         extra!.removeAttribute('inert');
         extra!.removeAttribute('aria-hidden');
@@ -154,7 +152,6 @@ const average = testimonials.reduce((sum, t) => sum + t.rating, 0) / testimonial
         extra!.setAttribute('aria-hidden', 'true');
       }
 
-      // Entrada escalonada de las tarjetas al expandir
       cards.forEach((card, i) => {
         if (open) {
           card.style.transitionDelay = reduceMotion ? '0ms' : `${120 + i * 70}ms`;
@@ -164,7 +161,6 @@ const average = testimonials.reduce((sum, t) => sum + t.rating, 0) / testimonial
         }
       });
 
-      // Al contraer, volver a la primera fila para no perder la posición
       if (!open && firstRow) {
         firstRow.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
       }

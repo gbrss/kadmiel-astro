@@ -4,13 +4,7 @@ const message = encodeURIComponent('Hola! Me gustaría conocer más sobre sus se
 const waUrl = `https://wa.me/${phone}?text=${message}`;
 ---
 
-<a
-  href={waUrl}
-  target="_blank"
-  rel="noopener noreferrer"
-  aria-label="Contactar por WhatsApp"
-  class="whatsapp-float"
->
+<a href={waUrl} target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp" class="whatsapp-float">
   <span class="whatsapp-pulse"></span>
   <span class="whatsapp-pulse whatsapp-pulse-delay"></span>
   <svg class="whatsapp-icon" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
@@ -20,65 +14,27 @@ const waUrl = `https://wa.me/${phone}?text=${message}`;
 
 <style>
   .whatsapp-float {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    z-index: 9999;
-    width: 3.75rem;
-    height: 3.75rem;
-    background: #25d366;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+    width: 3.75rem; height: 3.75rem; background: #25d366; color: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
     box-shadow: 0 4px 20px rgba(37, 211, 102, 0.45);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
-    text-decoration: none;
+    text-decoration: none; will-change: transform; /* Optimización GPU */
   }
-
-  .whatsapp-float:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 28px rgba(37, 211, 102, 0.55);
-  }
-
-  .whatsapp-icon {
-    width: 1.75rem;
-    height: 1.75rem;
-    position: relative;
-    z-index: 2;
-  }
-
+  .whatsapp-float:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37, 211, 102, 0.55); }
+  .whatsapp-icon { width: 1.75rem; height: 1.75rem; position: relative; z-index: 2; }
+  
   .whatsapp-pulse {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: #25d366;
-    animation: wa-pulse 2s ease-out infinite;
-    z-index: 1;
+    position: absolute; inset: 0; border-radius: 50%; background: #25d366;
+    animation: wa-pulse 2s ease-out infinite; z-index: 1;
+    will-change: transform, opacity; /* Optimización GPU */
   }
-
-  .whatsapp-pulse-delay {
-    animation-delay: 1s;
-  }
-
+  .whatsapp-pulse-delay { animation-delay: 1s; }
+  
   @keyframes wa-pulse {
-    0% {
-      transform: scale(1);
-      opacity: 0.6;
-    }
-    100% {
-      transform: scale(1.8);
-      opacity: 0;
-    }
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.8); opacity: 0; }
   }
-
-  @media (max-width: 640px) {
-    .whatsapp-float {
-      bottom: 1.25rem;
-      right: 1.25rem;
-      width: 3.5rem;
-      height: 3.5rem;
-    }
-  }
+  @media (max-width: 640px) { .whatsapp-float { bottom: 1.25rem; right: 1.25rem; width: 3.5rem; height: 3.5rem; } }
+  @media (prefers-reduced-motion: reduce) { .whatsapp-pulse { animation: none; } }
 </style>

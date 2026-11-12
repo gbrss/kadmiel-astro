@@ -1,12 +1,12 @@
 ---
-import '../styles/global.css'; //
+import '../styles/global.css';
 
 interface Props {
 	title: string;
 	description?: string;
 }
 
-const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS. Alto Rendimiento, SEO Superior y Arquitectura de Islas." } = Astro.props;
+const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS." } = Astro.props;
 ---
 
 <!doctype html>
@@ -18,19 +18,23 @@ const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		
+		<!-- Optimización de fuentes: Precarga y evita bloqueo -->
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+		<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" media="print" onload="this.media='all'" />
+		<noscript>
+			<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" />
+		</noscript>
 	</head>
-	<body class="page-fade bg-[#090d16] text-slate-100 font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-purple-500 selection:text-white">
+	<body class="bg-kadmiel-bg text-slate-100 font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-purple-500 selection:text-white">
 		<slot />
+		
 		<script>
-			// Fade-in de página al cargar
-			document.body.classList.add('page-ready');
-
-			// Reveal al scroll para secciones y elementos
+			// Reveal al scroll (Sin ocultar el body completo)
 			const targets = document.querySelectorAll(
-				'main > section, footer, .reveal, .stat-card, .pf-card, #ventajas > div > div > div, #comparativa table, #proceso .grid > div, #garantias .grid > div'
+				'main > section:not(:first-child), footer, .reveal, .stat-card, .pf-card, #ventajas > div > div > div, #comparativa table, #proceso .grid > div, #garantias .grid > div'
 			);
 
 			targets.forEach((el) => el.classList.add('fade-section'));
@@ -48,61 +52,30 @@ const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS
 			);
 
 			document.querySelectorAll('.fade-section').forEach((el) => io.observe(el));
-
-			// Hero visible de inmediato
-			const hero = document.querySelector('main > section');
-			if (hero) {
-				hero.classList.add('is-visible');
-				io.unobserve(hero);
-			}
 		</script>
 	</body>
 </html>
 
 <style is:global>
-	::-webkit-scrollbar {
-		width: 10px;
-	}
-	::-webkit-scrollbar-track {
-		background: #090d16;
-	}
-	::-webkit-scrollbar-thumb {
-		background: #1f2937;
-		border-radius: 5px;
-	}
-	::-webkit-scrollbar-thumb:hover {
-		background: #374151;
-	}
-
-	/* Carga de página */
-	.page-fade {
-		opacity: 0;
-		transition: opacity 0.6s ease;
-	}
-	.page-fade.page-ready {
-		opacity: 1;
-	}
+	/* Scrollbar */
+	::-webkit-scrollbar { width: 10px; }
+	::-webkit-scrollbar-track { background: #090d16; }
+	::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 5px; }
+	::-webkit-scrollbar-thumb:hover { background: #374151; }
 
 	/* Secciones / elementos al scroll */
 	.fade-section {
 		opacity: 0;
-		transform: translateY(28px);
-		transition:
-			opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-			transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+		transform: translateY(20px);
+		transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+		will-change: opacity, transform;
 	}
 	.fade-section.is-visible {
 		opacity: 1;
 		transform: translateY(0);
 	}
 
-	/* Stagger opcional */
-	.fade-section:nth-child(2) { transition-delay: 0.05s; }
-	.fade-section:nth-child(3) { transition-delay: 0.1s; }
-	.fade-section:nth-child(4) { transition-delay: 0.15s; }
-
 	@media (prefers-reduced-motion: reduce) {
-		.page-fade,
 		.fade-section {
 			opacity: 1 !important;
 			transform: none !important;
