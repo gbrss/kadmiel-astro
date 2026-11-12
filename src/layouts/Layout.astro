@@ -19,10 +19,8 @@ const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		
-		<!-- Optimización de fuentes: Carga normal y preconnect -->
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+		<!-- Buena práctica: Preload de la fuente local para evitar parpadeos (FOUT) -->
+		<link rel="preload" href="/fonts/plus-jakarta-sans-variable.woff2" as="font" type="font/woff2" crossorigin />
 	</head>
 	<body class="bg-kadmiel-bg text-slate-100 font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-purple-500 selection:text-white">
 		<slot />

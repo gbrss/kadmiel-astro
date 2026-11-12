@@ -6,13 +6,15 @@ export default defineConfig({
     port: 3000,
   },
   build: {
-    // Inlinea el CSS crítico para evitar peticiones de bloqueo
+    // Mantenemos 'auto'. Forzar 'always' puede hacer el HTML demasiado pesado y retrasar el LCP.
     inlineStylesheets: 'auto',
   },
   vite: {
     plugins: [tailwindcss()],
     build: {
       cssMinify: 'lightningcss',
+      // Buena práctica: Evitar el "JavaScript heredado" compilando para navegadores modernos.
+      target: 'es2022', 
     }
   },
 });
