@@ -19,20 +19,16 @@ const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		
-		<!-- Optimización de fuentes: Precarga y evita bloqueo -->
+		<!-- Optimización de fuentes: Carga normal y preconnect -->
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" />
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" media="print" onload="this.media='all'" />
-		<noscript>
-			<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" />
-		</noscript>
+		<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
 	</head>
 	<body class="bg-kadmiel-bg text-slate-100 font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-purple-500 selection:text-white">
 		<slot />
 		
 		<script>
-			// Reveal al scroll (Sin ocultar el body completo)
+			// Reveal al scroll
 			const targets = document.querySelectorAll(
 				'main > section:not(:first-child), footer, .reveal, .stat-card, .pf-card, #ventajas > div > div > div, #comparativa table, #proceso .grid > div, #garantias .grid > div'
 			);

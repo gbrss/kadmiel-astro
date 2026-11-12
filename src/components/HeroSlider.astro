@@ -9,7 +9,7 @@
   </div>
 
   <!-- Canvas para la animación de partículas -->
-  <canvas id="hero-canvas" class="absolute inset-0 z-0 pointer-events-none w-full h-full"></canvas>
+  <canvas id="hero-canvas" width="100%" height="100%" class="absolute inset-0 z-0 pointer-events-none w-full h-full"></canvas>
 
   <!-- Halos de luz -->
   <div class="absolute top-0 left-1/2 -translate-x-1/2 w-200 h-125 pointer-events-none z-0" 
@@ -19,16 +19,17 @@
 
   <div class="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center relative z-10">
     
-    <!-- Columna izquierda: copy comercial (ahora más enfocada) -->
+    <!-- Columna izquierda: copy comercial -->
     <div class="lg:col-span-7 space-y-8">
       <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold uppercase tracking-widest backdrop-blur-sm">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
         +40 sitios entregados · 100/100 PageSpeed
       </div>
 
-      <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold text-white leading-[1.1] tracking-tight">
+      <!-- H1 con text-shadow invisible para forzar renderizado en LCP -->
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold text-white leading-[1.1] tracking-tight min-h-[160px]" style="text-shadow: 0px 0px 1px rgba(0,0,0,0.01);">
         Tu web en
-        <span class="text-transparent bg-clip-text bg-linear-to-r from-violet-400 via-cyan-400 to-emerald-300"> menos de 1 segundo</span>
+        <span class="text-transparent bg-clip-text bg-linear-to-r from-violet-400 via-cyan-400 to-emerald-300 drop-shadow-[0_0_1px_rgba(255,255,255,0.1)]"> menos de 1 segundo</span>
         <span class="block mt-2 text-slate-200">o pierdes clientes cada día</span>
       </h1>
 
