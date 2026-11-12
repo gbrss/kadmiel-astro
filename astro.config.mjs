@@ -6,15 +6,14 @@ export default defineConfig({
     port: 3000,
   },
   build: {
-    // Mantenemos 'auto'. Forzar 'always' puede hacer el HTML demasiado pesado y retrasar el LCP.
     inlineStylesheets: 'auto',
   },
   vite: {
     plugins: [tailwindcss()],
     build: {
+      minify: 'esbuild',
       cssMinify: 'lightningcss',
-      // Buena práctica: Evitar el "JavaScript heredado" compilando para navegadores modernos.
-      target: 'es2022', 
+      target: 'es2022', // Evita JavaScript heredado
     }
   },
 });

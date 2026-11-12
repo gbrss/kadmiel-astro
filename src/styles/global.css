@@ -1,18 +1,10 @@
 @import "tailwindcss";
 
-/* Buena práctica: Cargar fuentes locales con font-display: swap */
-@font-face {
-  font-family: 'Plus Jakarta Sans';
-  font-style: normal;
-  font-weight: 300 800; /* Rango variable o pesos específicos */
-  font-display: swap;
-  src: url('/fonts/plus-jakarta-sans-variable.woff2') format('woff2');
-}
-
 @theme {
   --color-kadmiel-bg: #090d16;
   --color-kadmiel-card: #111827;
   --color-kadmiel-accent: #8b5cf6;
   --color-kadmiel-cyan: #06b6d4;
   --color-kadmiel-gold: #f59e0b;
+  --font-sans: 'Plus Jakarta Sans Variable', sans-serif;
 }

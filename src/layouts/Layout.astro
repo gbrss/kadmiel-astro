@@ -1,5 +1,8 @@
 ---
+import '@fontsource-variable/plus-jakarta-sans';
 import '../styles/global.css';
+// Importamos la URL de la fuente para poder precargarla
+import fontUrl from '@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2?url';
 
 interface Props {
 	title: string;
@@ -19,10 +22,10 @@ const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		
-		<!-- Buena práctica: Preload de la fuente local para evitar parpadeos (FOUT) -->
-		<link rel="preload" href="/fonts/plus-jakarta-sans-variable.woff2" as="font" type="font/woff2" crossorigin />
+		<!-- PRECARGA DE LA FUENTE (Elimina el parpadeo) -->
+		<link rel="preload" href={fontUrl} as="font" type="font/woff2" crossorigin />
 	</head>
-	<body class="bg-kadmiel-bg text-slate-100 font-['Plus_Jakarta_Sans',sans-serif] antialiased selection:bg-purple-500 selection:text-white">
+	<body class="bg-kadmiel-bg text-slate-100 font-sans antialiased selection:bg-purple-500 selection:text-white">
 		<slot />
 		
 		<script>
@@ -51,13 +54,11 @@ const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS
 </html>
 
 <style is:global>
-	/* Scrollbar */
 	::-webkit-scrollbar { width: 10px; }
 	::-webkit-scrollbar-track { background: #090d16; }
 	::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 5px; }
 	::-webkit-scrollbar-thumb:hover { background: #374151; }
 
-	/* Secciones / elementos al scroll */
 	.fade-section {
 		opacity: 0;
 		transform: translateY(20px);

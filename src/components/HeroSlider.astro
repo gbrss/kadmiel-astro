@@ -26,13 +26,9 @@
         +40 sitios entregados · 100/100 PageSpeed
       </div>
 
-      <!-- H1 optimizado para LCP con doble capa para el gradiente -->
-      <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[1.1] tracking-tight min-h-40">
-        <span class="text-white">Tu web en</span>
-        <span class="relative inline-block">
-          <span class="relative z-10 text-white"> menos de 1 segundo</span>
-          <span class="absolute inset-0 z-0 bg-linear-to-r from-violet-400 via-cyan-400 to-emerald-300 bg-clip-text text-transparent" aria-hidden="true"> menos de 1 segundo</span>
-        </span>
+      <!-- H1 SÓLIDO PARA ASEGURAR EL LCP -->
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[1.1] tracking-tight min-h-40 text-white">
+        Tu web en <span class="text-cyan-400">menos de 1 segundo</span>
         <span class="block mt-2 text-slate-200">o pierdes clientes cada día</span>
       </h1>
 
@@ -100,20 +96,16 @@
         <!-- Cuerpo de la tarjeta -->
         <div class="relative bg-[#0d1322] h-full w-full rounded-[calc(2rem-3px)] p-8 md:p-10 flex flex-col border border-slate-800/50 backdrop-blur-xl overflow-hidden">
           
-          <!-- Buena práctica: Reemplazado el blur costoso por un gradiente radial estático -->
           <div class="absolute top-0 right-0 w-64 h-64 pointer-events-none rounded-full" style="background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%);"></div>
 
-          <!-- Etiqueta de oferta -->
           <div class="absolute top-0 right-8 bg-linear-to-r from-violet-600 to-cyan-500 text-white text-xs font-black px-4 py-1.5 rounded-b-lg uppercase tracking-wider shadow-lg z-10 animate-pulse">
             Oferta Especial
           </div>
 
-          <!-- Icono -->
           <div class="w-16 h-16 rounded-2xl bg-violet-500/20 flex items-center justify-center text-violet-400 mb-6 border border-violet-500/30 shadow-[0_0_20px_rgba(139,92,246,0.3)]">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           </div>
 
-          <!-- Título y descripción -->
           <h3 class="text-3xl font-black text-white leading-tight mb-3">
             Promoción <br/> Pyme Sitio Web
           </h3>
@@ -121,7 +113,6 @@
             Todo lo que necesitas para digitalizar tu negocio hoy. Sin letra chica.
           </p>
 
-          <!-- Precios -->
           <div class="bg-slate-950/60 rounded-2xl p-5 border border-slate-800 mb-8 relative overflow-hidden">
             <div class="absolute inset-0 bg-linear-to-r from-violet-500/5 to-cyan-500/5"></div>
             
@@ -138,7 +129,6 @@
             </div>
           </div>
 
-          <!-- Beneficios -->
           <ul class="space-y-4 mb-8 flex-1">
             <li class="flex items-center gap-3 text-sm text-slate-300 font-medium">
               <div class="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
@@ -166,7 +156,6 @@
             </li>
           </ul>
 
-          <!-- Botón -->
           <div class="w-full py-4 rounded-xl bg-violet-600 group-hover:bg-violet-500 text-center text-white font-black text-lg transition-colors shadow-lg shadow-violet-600/20">
             ¡Quiero esta oferta!
           </div>
@@ -252,7 +241,6 @@
     });
   };
 
-  // Buena práctica: Cargar el canvas solo tras la interacción o después de 3.5s para no afectar TBT
   let canvasLoaded = false;
   const loadCanvas = () => {
     if (!canvasLoaded) {
@@ -267,5 +255,5 @@
   window.addEventListener('scroll', loadCanvas, { passive: true, once: true });
   window.addEventListener('mousemove', loadCanvas, { passive: true, once: true });
   window.addEventListener('touchstart', loadCanvas, { passive: true, once: true });
-  setTimeout(loadCanvas, 3500); // Fallback por si no hay interacción
+  setTimeout(loadCanvas, 4000);
 </script>
