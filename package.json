@@ -22,5 +22,8 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss": "^4.3.5",
     "typescript": "^5.5.4"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
   }
 }
