@@ -26,10 +26,13 @@
         +40 sitios entregados · 100/100 PageSpeed
       </div>
 
-      <!-- H1 con text-shadow invisible para forzar renderizado en LCP -->
-      <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold text-white leading-[1.1] tracking-tight min-h-40" style="text-shadow: 0px 0px 1px rgba(0,0,0,0.01);">
-        Tu web en
-        <span class="text-transparent bg-clip-text bg-linear-to-r from-violet-400 via-cyan-400 to-emerald-300 drop-shadow-[0_0_1px_rgba(255,255,255,0.1)]"> menos de 1 segundo</span>
+      <!-- H1 CORREGIDO: Texto visible con gradiente como capa decorativa -->
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[1.1] tracking-tight min-h-40">
+        <span class="text-white">Tu web en</span>
+        <span class="relative inline-block">
+          <span class="relative z-10 text-white"> menos de 1 segundo</span>
+          <span class="absolute inset-0 z-0 bg-linear-to-r from-violet-400 via-cyan-400 to-emerald-300 bg-clip-text text-transparent" aria-hidden="true"> menos de 1 segundo</span>
+        </span>
         <span class="block mt-2 text-slate-200">o pierdes clientes cada día</span>
       </h1>
 
@@ -85,7 +88,7 @@
       </div>
     </div>
 
-    <!-- Columna derecha: SÚPER TARJETA DE OFERTA -->
+    <!-- Columna derecha: SÚPER TARJETA DE OFERTA (sin cambios) -->
     <div class="lg:col-span-5 relative z-20 mt-10 lg:mt-0">
       
       <!-- Contenedor con animación de borde -->
