@@ -12,8 +12,6 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     build: {
-      // Minificación agresiva
-      minify: 'terser',
       cssMinify: 'lightningcss',
     }
   },
