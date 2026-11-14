@@ -118,8 +118,8 @@ const projects = [
                 sizes="(max-width: 640px) 100vw, 340px"
               />
 
-              <div class="absolute top-3 right-3 z-10 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-950/90 border border-emerald-500/40 shadow-lg backdrop-blur-sm">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <div class="absolute top-3 right-3 z-10 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-950/90 border border-emerald-500/40 shadow-lg">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                 <span class="text-[11px] font-bold text-emerald-300 tabular-nums">{p.score}/100</span>
               </div>
             </div>
@@ -139,7 +139,7 @@ const projects = [
       </div>
     </div>
 
-    <div class="flex justify-center gap-2 mt-6" id="pf-dots" role="tablist" aria-label="Proyectos">
+    <div class="flex justify-center gap-2 mt-6" id="pf-dots" aria-label="Proyectos">
       {projects.map((_, i) => ( <button type="button" class="pf-dot h-2 rounded-full transition-all duration-300 bg-slate-700 w-2" data-index={i} aria-label={`Ir al proyecto ${i + 1}`} /> ))}
     </div>
     <p class="mt-8 text-center text-xs text-slate-500">
@@ -150,11 +150,7 @@ const projects = [
 
 <style>
   .scrollbar-hide::-webkit-scrollbar { display: none; }
-  .pf-card { animation: pfIn 0.5s ease-out both; will-change: transform, opacity; }
-  .pf-card:nth-child(1) { animation-delay: 0.05s; } .pf-card:nth-child(2) { animation-delay: 0.1s; } .pf-card:nth-child(3) { animation-delay: 0.15s; } .pf-card:nth-child(4) { animation-delay: 0.2s; } .pf-card:nth-child(5) { animation-delay: 0.25s; }
-  @keyframes pfIn { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
   #pf-track { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
-  @media (prefers-reduced-motion: reduce) { .pf-card { animation: none; } }
 </style>
 
 <script>
@@ -226,6 +222,10 @@ const projects = [
     }
     updateDots();
     startAuto();
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) startAuto();
+      else if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+    }).observe(track);
   };
 
   const pfSection = document.getElementById('portafolio');

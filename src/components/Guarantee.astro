@@ -81,17 +81,17 @@ const nextSteps = [
 
         <!-- Barra de progreso del ciclo -->
         <div class="h-0.5 w-full max-w-[12rem] mx-auto mb-8 rounded-full bg-slate-800 overflow-hidden">
-          <div id="nm-progress" class="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400" style="width: 0%"></div>
+          <div id="nm-progress" class="h-full w-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400" style="transform: scaleX(0); transform-origin: left;"></div>
         </div>
 
-        <div class="flex items-center justify-center gap-2 mb-8" id="nm-dots" role="tablist">
+        <div class="flex items-center justify-center gap-2 mb-8" id="nm-dots">
           {nextSteps.map((_, i) => (
             <button
               type="button"
               class="nm-dot h-2 rounded-full transition-all duration-300 bg-slate-600 w-2"
               data-index={i}
               aria-label={`Paso ${i + 1}`}
-              aria-selected={i === 0 ? 'true' : 'false'}
+              aria-current={i === 0 ? 'true' : 'false'}
             />
           ))}
         </div>
@@ -163,23 +163,24 @@ const nextSteps = [
   .nm-orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(60px);
     opacity: 0.45;
+    will-change: transform;
   }
   .nm-orb-a {
-    width: 220px;
-    height: 220px;
-    top: -60px;
-    left: 10%;
-    background: rgba(139, 92, 246, 0.35);
+    width: 340px;
+    height: 340px;
+    top: -120px;
+    left: calc(10% - 60px);
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.35) 0%, rgba(139, 92, 246, 0.12) 45%, transparent 72%);
+    transform-origin: center;
     animation: nmOrbA 12s ease-in-out infinite alternate;
   }
   .nm-orb-b {
-    width: 260px;
-    height: 260px;
-    bottom: -80px;
-    right: 8%;
-    background: rgba(34, 211, 238, 0.25);
+    width: 380px;
+    height: 380px;
+    bottom: -140px;
+    right: calc(8% - 60px);
+    background: radial-gradient(circle, rgba(34, 211, 238, 0.25) 0%, rgba(34, 211, 238, 0.08) 45%, transparent 72%);
     animation: nmOrbB 14s ease-in-out infinite alternate;
   }
   @keyframes nmOrbA {
@@ -222,7 +223,7 @@ const nextSteps = [
   }
 
   #nm-progress {
-    transition: width 0.1s linear;
+    will-change: transform;
   }
 
   .nm-slide {
@@ -290,6 +291,7 @@ const nextSteps = [
 </style>
 
 <script>
+  const nmRoot = document.getElementById('nm-dots')?.closest('.relative') as HTMLElement | null;
   const slides = document.querySelectorAll('.nm-slide');
   const dots = document.querySelectorAll('.nm-dot');
   const prev = document.getElementById('nm-prev');
@@ -297,17 +299,15 @@ const nextSteps = [
   const progress = document.getElementById('nm-progress');
   let idx = 0;
   let timer: ReturnType<typeof setInterval> | null = null;
-  let progTimer: ReturnType<typeof setInterval> | null = null;
+  let visible = false;
   const total = slides.length;
   const CYCLE = 4500;
 
   function go(i: number) {
     idx = ((i % total) + total) % total;
-    slides.forEach((s, si) => {
-      s.classList.toggle('is-active', si === idx);
-    });
+    slides.forEach((s, si) => s.classList.toggle('is-active', si === idx));
     dots.forEach((d, di) => {
-      d.setAttribute('aria-selected', di === idx ? 'true' : 'false');
+      d.setAttribute('aria-current', di === idx ? 'true' : 'false');
       d.className = di === idx
         ? 'nm-dot h-2 rounded-full transition-all duration-300 bg-cyan-400 w-6'
         : 'nm-dot h-2 rounded-full transition-all duration-300 bg-slate-600 w-2';
@@ -315,18 +315,21 @@ const nextSteps = [
     resetProgress();
   }
 
+  // Barra de progreso con transform (composited) y sin forzar reflow
   function resetProgress() {
     if (!progress) return;
-    if (progTimer) clearInterval(progTimer);
     progress.style.transition = 'none';
-    progress.style.width = '0%';
-    progress.offsetHeight;
-    progress.style.transition = `width ${CYCLE}ms linear`;
-    progress.style.width = '100%';
+    progress.style.transform = 'scaleX(0)';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      progress.style.transition = `transform ${CYCLE}ms linear`;
+      progress.style.transform = 'scaleX(1)';
+    }));
   }
 
+  function stopAuto() { if (timer) { clearInterval(timer); timer = null; } }
   function startAuto() {
-    if (timer) clearInterval(timer);
+    stopAuto();
+    if (!visible) return;
     resetProgress();
     timer = setInterval(() => go(idx + 1), CYCLE);
   }
@@ -335,6 +338,11 @@ const nextSteps = [
   prev?.addEventListener('click', () => { go(idx - 1); startAuto(); });
   next?.addEventListener('click', () => { go(idx + 1); startAuto(); });
 
-  go(0);
-  startAuto();
-</script> 
+  // Solo rota mientras está en pantalla
+  if (nmRoot) {
+    new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      visible ? startAuto() : stopAuto();
+    }, { rootMargin: '100px' }).observe(nmRoot);
+  }
+</script>

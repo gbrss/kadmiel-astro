@@ -164,7 +164,6 @@ const steps = [
     background: linear-gradient(90deg, #8b5cf6, #22d3ee);
     transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     box-shadow: 0 0 12px rgba(34, 211, 238, 0.5);
-    will-change: transform;
   }
   
   .proceso-line-dot {
@@ -193,7 +192,6 @@ const steps = [
   .step-card {
     transform-style: preserve-3d;
     transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-    will-change: transform;
     animation: stepIn 0.55s ease-out both;
     animation-delay: calc(var(--i, 0) * 90ms);
   }
@@ -317,7 +315,6 @@ const steps = [
     border-radius: 50%;
     background: #22d3ee;
     animation: pulseDot 1.6s ease-out infinite;
-    will-change: transform, opacity;
   }
   @keyframes pulseDot {
     0% { transform: scale(1); opacity: 1; }

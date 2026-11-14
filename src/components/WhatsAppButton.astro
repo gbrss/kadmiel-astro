@@ -19,7 +19,7 @@ const waUrl = `https://wa.me/${phone}?text=${message}`;
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 4px 20px rgba(37, 211, 102, 0.45);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
-    text-decoration: none; will-change: transform; /* Optimización GPU */
+    text-decoration: none;
   }
   .whatsapp-float:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37, 211, 102, 0.55); }
   .whatsapp-icon { width: 1.75rem; height: 1.75rem; position: relative; z-index: 2; }
@@ -27,7 +27,6 @@ const waUrl = `https://wa.me/${phone}?text=${message}`;
   .whatsapp-pulse {
     position: absolute; inset: 0; border-radius: 50%; background: #25d366;
     animation: wa-pulse 2s ease-out infinite; z-index: 1;
-    will-change: transform, opacity; /* Optimización GPU */
   }
   .whatsapp-pulse-delay { animation-delay: 1s; }
   

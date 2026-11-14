@@ -66,7 +66,7 @@ const painPoints = [
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-16" id="stats-grid">
       {stats.map((s) => (
         <div
-          class={`stat-card group relative rounded-2xl border border-slate-800/80 bg-slate-900/60 px-5 py-7 text-center backdrop-blur-sm overflow-hidden transition-all duration-500 hover:border-violet-500/40 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-violet-500/10`}
+          class={`stat-card group relative rounded-2xl border border-slate-800/80 bg-slate-900/60 px-5 py-7 text-center overflow-hidden transition-all duration-500 hover:border-violet-500/40 hover:bg-slate-900/80 hover:shadow-lg hover:shadow-violet-500/10`}
           style={`animation-delay: ${s.delay}ms`}
           data-stat={s.id}
           data-type={s.type}
@@ -175,7 +175,6 @@ const painPoints = [
   /* Animación única que maneja entrada y flotación */
   .stat-card {
     animation: floatCard 5s ease-in-out infinite;
-    will-change: transform, opacity;
   }
   
   @keyframes floatCard {
@@ -185,7 +184,6 @@ const painPoints = [
 
   .stat-icon {
     animation: iconBob 3s ease-in-out infinite;
-    will-change: transform;
   }
   .stat-card:nth-child(2) .stat-icon { animation-delay: 0.4s; }
   .stat-card:nth-child(3) .stat-icon { animation-delay: 0.8s; }
@@ -199,7 +197,6 @@ const painPoints = [
   /* Cambiamos filter por transform y opacity */
   .icon-pulse {
     animation: boltPulse 1.8s ease-in-out infinite;
-    will-change: transform, opacity;
   }
   @keyframes boltPulse {
     0%, 100% { opacity: 1; transform: scale(1); }

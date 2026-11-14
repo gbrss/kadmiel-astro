@@ -9,27 +9,26 @@
   </div>
 
   <!-- Canvas para la animación de partículas -->
-  <canvas id="hero-canvas" width="100%" height="100%" class="absolute inset-0 z-0 pointer-events-none w-full h-full"></canvas>
+  <canvas id="hero-canvas" aria-hidden="true" class="absolute inset-0 z-0 pointer-events-none w-full h-full"></canvas>
 
   <!-- Halos de luz -->
   <div class="absolute top-0 left-1/2 -translate-x-1/2 w-200 h-125 pointer-events-none z-0" 
        style="background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%);"></div>
-  <div class="absolute top-1/4 right-0 w-112.5 h-112.5 pointer-events-none z-0" 
+  <div class="absolute top-40 right-0 w-112.5 h-112.5 pointer-events-none z-0" aria-hidden="true" 
        style="background: radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%);"></div>
 
   <div class="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center relative z-10">
     
     <!-- Columna izquierda: copy comercial -->
     <div class="lg:col-span-7 space-y-8">
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold uppercase tracking-widest backdrop-blur-sm">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold uppercase tracking-widest">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
         +40 sitios entregados · 100/100 PageSpeed
       </div>
 
       <!-- H1 Optimizado para detección inmediata de LCP -->
       <h1 
-        class="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[1.1] tracking-tight min-h-40 text-white"
-        style="content-visibility: auto; contain-intrinsic-size: 1px 200px;"
+        class="text-5xl sm:text-6xl md:text-7xl font-extrabold leading-[1.1] tracking-tight text-white"
       >
         Tu web en <span class="text-cyan-400">menos de 1 segundo</span>
         <span class="block mt-2 text-slate-200">o pierdes clientes cada día</span>
@@ -70,7 +69,7 @@
         </a>
         <a
           href="#proceso"
-          class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border border-slate-700 bg-slate-900/60 backdrop-blur-sm text-slate-200 font-bold text-lg hover:border-cyan-500/50 hover:text-white transition-all"
+          class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border border-slate-700 bg-slate-900/60 text-slate-200 font-bold text-lg hover:border-cyan-500/50 hover:text-white transition-all"
         >
           Cómo trabajamos
         </a>
@@ -94,10 +93,10 @@
       <a href="#cotizador" class="relative block rounded-4xl p-0.75 overflow-hidden group hover:scale-[1.02] transition-transform duration-300 shadow-2xl">
         
         <!-- Luz giratoria del borde -->
-        <div class="absolute -inset-full animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_0%,transparent_60%,#8b5cf6_85%,#22d3ee_100%)]"></div>
+        <div aria-hidden="true" class="absolute -inset-full motion-safe:animate-[spin_4s_linear_infinite] will-change-transform bg-[conic-gradient(from_0deg,transparent_0%,transparent_60%,#8b5cf6_85%,#22d3ee_100%)]"></div>
 
         <!-- Cuerpo de la tarjeta -->
-        <div class="relative bg-[#0d1322] h-full w-full rounded-[calc(2rem-3px)] p-8 md:p-10 flex flex-col border border-slate-800/50 backdrop-blur-xl overflow-hidden">
+        <div class="relative bg-[#0d1322] h-full w-full rounded-[calc(2rem-3px)] p-8 md:p-10 flex flex-col border border-slate-800/50 overflow-hidden">
           
           <div class="absolute top-0 right-0 w-64 h-64 pointer-events-none rounded-full" style="background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%);"></div>
 
@@ -109,9 +108,9 @@
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           </div>
 
-          <h3 class="text-3xl font-black text-white leading-tight mb-3">
+          <h2 class="text-3xl font-black text-white leading-tight mb-3">
             Promoción <br/> Pyme Sitio Web
-          </h3>
+          </h2>
           <p class="text-slate-400 text-sm mb-8 leading-relaxed">
             Todo lo que necesitas para digitalizar tu negocio hoy. Sin letra chica.
           </p>
@@ -170,22 +169,27 @@
 
 <script>
   const initCanvas = () => {
-    const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement;
+    const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement | null;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
-    let width = canvas.width = canvas.offsetWidth;
-    let height = canvas.height = canvas.offsetHeight;
-
-    window.addEventListener('resize', () => {
+    let width = 0, height = 0;
+    const resize = () => {
       width = canvas.width = canvas.offsetWidth;
       height = canvas.height = canvas.offsetHeight;
-    });
+    };
+    resize();
+    let resizeRaf = 0;
+    window.addEventListener('resize', () => {
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(resize);
+    }, { passive: true });
 
     const particles: { x: number, y: number, vx: number, vy: number, radius: number, color: string }[] = [];
     const particleCount = window.innerWidth < 768 ? 20 : 60;
     const maxDistance = 120;
+    const maxDist2 = maxDistance * maxDistance;
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
@@ -198,62 +202,63 @@
       });
     }
 
-    let animationFrameId: number;
+    let rafId = 0;
+    let running = false;
 
-    function animate() {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, width, height);
+    function frame() {
+      ctx!.clearRect(0, 0, width, height);
 
-      particles.forEach(p => {
+      for (const p of particles) {
         p.x += p.vx;
         p.y += p.vy;
         if (p.x < 0 || p.x > width) p.vx *= -1;
         if (p.y < 0 || p.y > height) p.vy *= -1;
+        ctx!.beginPath();
+        ctx!.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx!.fillStyle = p.color;
+        ctx!.fill();
+      }
 
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.fill();
-      });
-
+      ctx!.lineWidth = 1;
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < maxDistance) {
-            const opacity = 1 - (distance / maxDistance);
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(139, 92, 246, ${opacity * 0.25})`; 
-            ctx.lineWidth = 1;
-            ctx.stroke();
+          const d2 = dx * dx + dy * dy;
+          if (d2 < maxDist2) {
+            const opacity = 1 - Math.sqrt(d2) / maxDistance;
+            ctx!.beginPath();
+            ctx!.moveTo(particles[i].x, particles[i].y);
+            ctx!.lineTo(particles[j].x, particles[j].y);
+            ctx!.strokeStyle = `rgba(139, 92, 246, ${opacity * 0.25})`;
+            ctx!.stroke();
           }
         }
       }
-      animationFrameId = requestAnimationFrame(animate);
+      if (running) rafId = requestAnimationFrame(frame);
     }
 
-    animate();
+    const start = () => { if (!running && !document.hidden) { running = true; rafId = requestAnimationFrame(frame); } };
+    const stop = () => { running = false; cancelAnimationFrame(rafId); };
 
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) cancelAnimationFrame(animationFrameId);
-      else animate();
-    });
+    // Solo anima mientras el hero está en pantalla y la pestaña visible
+    let inView = true;
+    new IntersectionObserver(([e]) => { inView = e.isIntersecting; inView ? start() : stop(); }).observe(canvas);
+    document.addEventListener('visibilitychange', () => { document.hidden ? stop() : inView && start(); });
+    start();
   };
 
-  // OPTIMIZACIÓN EXTREMA: El canvas solo se carga cuando el usuario hace scroll
-  let canvasLoaded = false;
-  const loadCanvas = () => {
-    if (!canvasLoaded) {
-      canvasLoaded = true;
-      initCanvas();
-    }
-  };
-
-  window.addEventListener('scroll', loadCanvas, { passive: true, once: true });
-  // Respaldo por si el usuario no hace scroll, para que no se quede sin animación
-  setTimeout(loadCanvas, 5000); 
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // Se inicia después del load, en tiempo ocioso: no compite con LCP ni suma TBT
+    let loaded = false;
+    const boot = () => {
+      if (loaded) return;
+      loaded = true;
+      const ric = (window as any).requestIdleCallback as ((cb: () => void, o?: { timeout: number }) => number) | undefined;
+      ric ? ric(initCanvas, { timeout: 2000 }) : setTimeout(initCanvas, 200);
+    };
+    window.addEventListener('scroll', boot, { passive: true, once: true });
+    window.addEventListener('pointerdown', boot, { passive: true, once: true });
+    window.addEventListener('load', () => setTimeout(boot, 3500), { once: true });
+  }
 </script>
