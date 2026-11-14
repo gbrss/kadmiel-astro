@@ -8,7 +8,7 @@ interface Props {
 	image?: string;
 }
 
-const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS.", image = '/og-image.jpg' } = Astro.props;
+const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS.", image = '/og-logo.jpg' } = Astro.props;
 const site = 'https://kadmiel.cl';
 const canonical = new URL(Astro.url.pathname, site).href;
 const ogImage = new URL(image, site).href;
@@ -39,10 +39,10 @@ const ogImage = new URL(image, site).href;
 		<meta property="og:image" content={ogImage} />
 		<meta property="og:image:secure_url" content={ogImage} />
 		<meta property="og:image:type" content="image/jpeg" />
-		<meta property="og:image:width" content="1200" />
-		<meta property="og:image:height" content="630" />
-		<meta property="og:image:alt" content="Kadmiel — Sitios web ultrarrápidos para tu negocio" />
-		<meta name="twitter:card" content="summary_large_image" />
+		<meta property="og:image:width" content="600" />
+		<meta property="og:image:height" content="600" />
+		<meta property="og:image:alt" content="Logo de Kadmiel" />
+		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
 		<meta name="twitter:image" content={ogImage} />
