@@ -5,9 +5,13 @@ import fontUrl from '@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-s
 interface Props {
 	title: string;
 	description?: string;
+	image?: string;
 }
 
-const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS." } = Astro.props;
+const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS.", image = '/og-image.jpg' } = Astro.props;
+const site = 'https://kadmiel.cl';
+const canonical = new URL(Astro.url.pathname, site).href;
+const ogImage = new URL(image, site).href;
 ---
 
 <!doctype html>
@@ -17,8 +21,31 @@ const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS
 		<meta name="description" content={description} />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="theme-color" content="#090d16" />
-		<link rel="canonical" href="https://kadmiel.cl/" />
+		<link rel="canonical" href={canonical} />
+
+		<!-- Íconos (PNG para WhatsApp/iOS/Android, SVG para navegadores modernos) -->
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+
+		<!-- Vista previa al compartir (WhatsApp, Facebook, LinkedIn, X) -->
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Kadmiel" />
+		<meta property="og:locale" content="es_CL" />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:secure_url" content={ogImage} />
+		<meta property="og:image:type" content="image/jpeg" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content="Kadmiel — Sitios web ultrarrápidos para tu negocio" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImage} />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		
@@ -51,22 +78,43 @@ const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS
 			document.querySelectorAll('.fade-section').forEach((el) => io.observe(el));
 
 			// Navegación por anclas compatible con content-visibility:auto.
-			// Se renderizan todas las secciones antes de saltar y se corrige la posición
-			// mientras terminan de pintarse (imágenes, fuentes, animaciones de entrada).
+			// Al primer gesto del usuario se renderizan todas las secciones (no afecta la carga
+			// medida por PageSpeed), así el salto se calcula con alturas reales y no hay correcciones.
+			const root = document.documentElement;
+			const renderAll = () => root.classList.add('cv-off');
+			['pointerdown', 'touchstart', 'keydown', 'wheel', 'scroll'].forEach((ev) =>
+				window.addEventListener(ev, renderAll, { passive: true, once: true, capture: true })
+			);
+
+			// Posición absoluta sin transforms (las animaciones de entrada desplazan con translateY)
+			const targetY = (el: HTMLElement) => {
+				let y = 0;
+				for (let n: HTMLElement | null = el; n; n = n.offsetParent as HTMLElement | null) y += n.offsetTop;
+				return Math.max(0, y - parseFloat(getComputedStyle(el).scrollMarginTop || '0'));
+			};
+
 			const goToHash = (hash: string, smooth: boolean) => {
 				const target = hash.length > 1 ? document.getElementById(decodeURIComponent(hash.slice(1))) : null;
 				if (!target) return false;
-				document.documentElement.classList.add('cv-off');
-				requestAnimationFrame(() => {
-					target.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant', block: 'start' });
-					let tries = 0;
-					const settle = () => {
-						const off = target.getBoundingClientRect().top - parseFloat(getComputedStyle(target).scrollMarginTop || '0');
-						if (Math.abs(off) > 2) target.scrollIntoView({ behavior: 'instant', block: 'start' });
-						if (++tries < 5) setTimeout(settle, 300);
-					};
-					setTimeout(settle, smooth ? 900 : 100);
-				});
+				renderAll();
+				void root.offsetHeight; // fuerza el layout ya con todas las secciones renderizadas
+				const behavior: ScrollBehavior = smooth ? 'smooth' : 'instant';
+				const y = targetY(target);
+				window.scrollTo({ top: y, behavior });
+				// Corrección única y suave solo si algo cambió de alto durante el scroll
+				let done = false;
+				const check = () => {
+					if (done) return;
+					done = true;
+					const y2 = targetY(target);
+					if (Math.abs(y2 - y) > 2 || Math.abs(window.scrollY - y2) > 2) window.scrollTo({ top: y2, behavior });
+				};
+				if (smooth && 'onscrollend' in window) {
+					window.addEventListener('scrollend', check, { once: true });
+					setTimeout(check, 1500);
+				} else {
+					setTimeout(check, smooth ? 900 : 50);
+				}
 				return true;
 			};
 
@@ -118,7 +166,7 @@ const { title, description = "Kadmiel - Páginas Web Ultrarrápidas con Astro JS
 		contain-intrinsic-size: auto 900px;
 	}
 	/* Al navegar a un ancla se desactiva para que el salto calcule alturas reales */
-	html.cv-off main > section,
+	html.cv-off main > section:not(:first-child):not(#proceso),
 	html.cv-off body > footer {
 		content-visibility: visible;
 	}
