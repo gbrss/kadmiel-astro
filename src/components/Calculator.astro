@@ -241,34 +241,34 @@
                     <p id="form-total" class="text-sm font-bold text-violet-300 tabular-nums">$45.990 CLP</p>
                   </div>
 
-                  <form id="quote-form" class="space-y-4" autocomplete="on">
+                  <form id="quote-form" class="space-y-4" autocomplete="on" toolname="solicitar_cotizacion" tooldescription="Envía a Kadmiel una solicitud de cotización para desarrollar un sitio web, usando el tipo de proyecto y los módulos elegidos en la calculadora. Requiere nombre y correo de contacto.">
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div>
                         <label for="qf-name" class="mb-1.5 block text-xs font-bold text-slate-300">Nombre <span class="text-rose-400" aria-hidden="true">*</span></label>
-                        <input id="qf-name" name="name" type="text" required minlength="2" maxlength="100" autocomplete="name" placeholder="Tu nombre" class="qf-input" />
+                        <input id="qf-name" name="name" toolparamdescription="Nombre completo de la persona que solicita la cotización" type="text" required minlength="2" maxlength="100" autocomplete="name" placeholder="Tu nombre" class="qf-input" />
                       </div>
                       <div>
                         <label for="qf-email" class="mb-1.5 block text-xs font-bold text-slate-300">Correo <span class="text-rose-400" aria-hidden="true">*</span></label>
-                        <input id="qf-email" name="email" type="email" required maxlength="150" autocomplete="email" placeholder="tucorreo@empresa.cl" class="qf-input" />
+                        <input id="qf-email" name="email" toolparamdescription="Correo electrónico donde Kadmiel enviará la propuesta" type="email" required maxlength="150" autocomplete="email" placeholder="tucorreo@empresa.cl" class="qf-input" />
                       </div>
                       <div>
                         <label for="qf-phone" class="mb-1.5 block text-xs font-bold text-slate-300">Teléfono <span class="font-normal text-slate-500">(opcional)</span></label>
-                        <input id="qf-phone" name="phone" type="tel" maxlength="30" autocomplete="tel" placeholder="+56 9 1234 5678" class="qf-input" />
+                        <input id="qf-phone" name="phone" toolparamdescription="Teléfono o WhatsApp de contacto (opcional), formato +56 9 XXXX XXXX" type="tel" maxlength="30" autocomplete="tel" placeholder="+56 9 1234 5678" class="qf-input" />
                       </div>
                       <div>
                         <label for="qf-company" class="mb-1.5 block text-xs font-bold text-slate-300">Empresa o proyecto <span class="font-normal text-slate-500">(opcional)</span></label>
-                        <input id="qf-company" name="company" type="text" maxlength="120" autocomplete="organization" placeholder="Nombre de tu negocio" class="qf-input" />
+                        <input id="qf-company" name="company" toolparamdescription="Nombre de la empresa o negocio (opcional)" type="text" maxlength="120" autocomplete="organization" placeholder="Nombre de tu negocio" class="qf-input" />
                       </div>
                     </div>
 
                     <div>
                       <label for="qf-message" class="mb-1.5 block text-xs font-bold text-slate-300">Mensaje <span class="font-normal text-slate-500">(opcional)</span></label>
-                      <textarea id="qf-message" name="message" rows="4" maxlength="2000" placeholder="Cuéntanos qué necesitas, plazos, referencias de sitios que te gusten…" class="qf-input resize-y"></textarea>
+                      <textarea id="qf-message" name="message" toolparamdescription="Detalles del proyecto: rubro, secciones, plazos y sitios de referencia (opcional)" rows="4" maxlength="2000" placeholder="Cuéntanos qué necesitas, plazos, referencias de sitios que te gusten…" class="qf-input resize-y"></textarea>
                     </div>
 
                     <div class="qf-trap" aria-hidden="true">
                       <label for="qf-website">No completar este campo</label>
-                      <input id="qf-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+                      <input id="qf-website" name="website" toolparamdescription="Campo anti-spam: dejar siempre vacío" type="text" tabindex="-1" autocomplete="off" />
                     </div>
 
                     <div id="quote-error" class="hidden rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200" role="alert">

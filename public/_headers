@@ -7,3 +7,14 @@
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
+
+/.well-known/ard.json
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/llms.txt
+  Content-Type: text/markdown; charset=utf-8
+
+/skills/*
+  Content-Type: text/markdown; charset=utf-8
+  Access-Control-Allow-Origin: *

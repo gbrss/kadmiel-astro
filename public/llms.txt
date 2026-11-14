@@ -1,0 +1,24 @@
+# Kadmiel
+
+> Kadmiel (kadmiel.cl) es un estudio chileno de desarrollo web que construye sitios ultrarrápidos con Astro: landing pages, sitios corporativos, catálogos y tiendas, con 95–100 en PageSpeed, SEO técnico y entrega en 7–15 días hábiles. Precios: Promoción Pyme: $45.990 inicial + $25.000/mes (dominio 1 año y primer mes de hosting incluidos).
+
+## Servicios y precios
+
+- [Landing Page](https://kadmiel.cl/#cotizador): una página enfocada en conversión. Desde $150.000 CLP.
+- [Sitio Corporativo](https://kadmiel.cl/#cotizador): hasta 5 secciones con formulario y SEO base. Desde $250.000 CLP.
+- [Corporativo + Blog](https://kadmiel.cl/#cotizador): sitio de empresa con blog para contenido y SEO. Desde $320.000 CLP.
+- [Catálogo / Tienda](https://kadmiel.cl/#cotizador): productos, filtros y contacto o pasarela de pago (Webpay). Desde $360.000 CLP.
+- [Migración desde WordPress](https://kadmiel.cl/#comparativa): pasamos tu sitio actual a Astro, más rápido y seguro.
+
+## Cómo cotizar
+
+- [Calculadora de proyecto](https://kadmiel.cl/#cotizador): elige tipo de sitio y módulos y envía la solicitud por correo o WhatsApp.
+- [WhatsApp](https://wa.me/56962206148): +56 9 6220 6148.
+- [Correo](mailto:contacto@kadmiel.cl): contacto@kadmiel.cl.
+- [Skill para agentes: cotizar un sitio web](https://kadmiel.cl/skills/cotizar-sitio-web.md)
+
+## Más información
+
+- [Proceso de trabajo](https://kadmiel.cl/#proceso): diagnóstico, diseño, desarrollo con Astro, entrega y soporte.
+- [Portafolio](https://kadmiel.cl/#portafolio): sitios reales para minería, turismo, catálogos y holdings.
+- [Garantías](https://kadmiel.cl/#garantias): precio cerrado, velocidad real y soporte post-entrega.

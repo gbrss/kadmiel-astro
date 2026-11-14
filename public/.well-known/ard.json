@@ -1,0 +1,18 @@
+{
+  "entries": [
+    {
+      "identifier": "urn:air:kadmiel.cl:skills:cotizar-sitio-web",
+      "displayName": "Cotizar un sitio web con Kadmiel",
+      "type": "application/agent-skills+md",
+      "url": "https://kadmiel.cl/skills/cotizar-sitio-web.md",
+      "description": "Skill para solicitar a Kadmiel, estudio web chileno, una cotización de sitio web ultrarrápido con Astro: landing, corporativo, blog, catálogo, tienda o migración desde WordPress.",
+      "representativeQueries": [
+        "Cotizar una página web en Chile",
+        "Agencia que haga sitios web rápidos con Astro",
+        "Cuánto cuesta una landing page para mi pyme",
+        "Migrar mi sitio de WordPress a algo más rápido"
+      ],
+      "tags": ["desarrollo web", "astro", "chile", "pymes", "pagespeed"]
+    }
+  ]
+}
