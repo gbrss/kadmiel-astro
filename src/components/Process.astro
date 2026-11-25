@@ -217,6 +217,7 @@ const steps = [
     /* Eliminado el hue-rotate para evitar repintado */
   }
   .step-card:hover .step-ring,
+  .step-card:focus-visible .step-ring,
   .step-card.is-open .step-ring {
     opacity: 1;
   }
@@ -379,13 +380,14 @@ const steps = [
 
   @media (hover: hover) and (pointer: fine) {
     .step-card:hover .step-pop,
-    .step-card:focus-within .step-pop {
+    .step-card:focus-visible .step-pop {
       opacity: 1;
       visibility: visible;
       transform: translateY(0) scale(1);
       pointer-events: auto;
     }
-    .step-card:hover .step-detail-item {
+    .step-card:hover .step-detail-item,
+    .step-card:focus-visible .step-detail-item {
       animation: detailIn 0.35s ease-out both;
       animation-delay: calc(var(--di, 0) * 60ms);
     }
@@ -488,11 +490,19 @@ const steps = [
     });
   });
 
-  document.addEventListener('click', () => {
+  const closeAll = () => {
     cards.forEach((c) => {
       c.classList.remove('is-open');
       c.setAttribute('aria-expanded', 'false');
     });
+    setProgress(0);
+  };
+  document.addEventListener('click', closeAll);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeAll();
+      (document.activeElement as HTMLElement | null)?.blur?.();
+    }
   });
 
   setProgress(0);
