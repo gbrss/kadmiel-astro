@@ -9,7 +9,7 @@ const phone = '56962206148';
   type="button"
   id="kd-chat-toggle"
   class="kd-chat-float"
-  aria-label="Abrir chat con el asistente de Kadmiel"
+  aria-label="Abrir chat con Aurora, asistente de Kadmiel"
   aria-expanded="false"
   aria-controls="kd-chat-panel"
 >
@@ -22,7 +22,7 @@ const phone = '56962206148';
   </svg>
 </button>
 
-<div id="kd-chat-panel" class="kd-chat-panel" role="dialog" aria-label="Asistente de Kadmiel" hidden data-phone={phone}></div>
+<div id="kd-chat-panel" class="kd-chat-panel" role="dialog" aria-label="Chat con Aurora" hidden data-phone={phone}></div>
 
 <style>
   .kd-chat-float {
@@ -137,6 +137,7 @@ const phone = '56962206148';
   const phone = panel.dataset.phone || '56962206148';
   const wa = (msg: string) => `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 
+  const WELCOME_CHIPS = ['Landing Page', 'Sitio Corporativo', 'Tienda online', 'Migrar desde WordPress', 'Promoción Pyme', 'Otro servicio'];
   const MENU = ['Precios', 'Promoción Pyme', 'Plazos de entrega', 'Migrar desde WordPress', 'Tienda online', 'Hablar con una persona'];
   const WA_LINK: Link = { label: 'Escribir por WhatsApp', href: wa('Hola! Vengo del chat de kadmiel.cl y quisiera cotizar un sitio web.') };
   const QUOTE_LINK: Link = { label: 'Ir al cotizador', href: '#cotizador' };
@@ -144,9 +145,19 @@ const phone = '56962206148';
   const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9$.\s-]/g, ' ');
 
   const R: Record<string, Reply> = {
+    // Primer mensaje: solo su nombre, pregunta el servicio y ofrece el plan Pyme
     welcome: {
-      text: ['¡Hola! Soy el asistente de Kadmiel.', 'Puedo orientarle sobre precios, plazos y servicios. ¿Qué le gustaría saber?'],
-      chips: MENU,
+      text: [
+        '¡Hola! Soy Aurora.',
+        '¿Qué servicio está buscando? Por ejemplo, una landing page, un sitio corporativo, una tienda online o migrar su sitio desde WordPress.',
+        'Además, hoy tenemos disponible nuestra Promoción Pyme Sitio Web: $45.990 de pago inicial + $25.000 al mes, con dominio por 1 año y el primer mes de hosting gratis. ¿Le interesa?',
+      ],
+      links: [{ label: 'Quiero el plan Pyme', href: wa('Hola Aurora! Me interesa la Promoción Pyme Sitio Web ($45.990 + $25.000/mes).') }],
+      chips: WELCOME_CHIPS,
+    },
+    quien: {
+      text: ['Soy Aurora, la asistente virtual de Kadmiel. Respondo consultas sobre servicios, precios y plazos, y si prefiere hablar con una persona del equipo, le dejo el contacto.'],
+      chips: ['Precios', 'Promoción Pyme', 'Hablar con una persona'],
     },
     precios: {
       text: ['Estos son nuestros valores referenciales en pesos chilenos:'],
@@ -264,17 +275,31 @@ const phone = '56962206148';
       links: [{ label: 'Ver portafolio', href: '#portafolio' }],
       chips: ['Precios', 'Hablar con una persona'],
     },
+    landing: {
+      text: ['Una Landing Page es una página enfocada en conversión; el valor referencial es desde $150.000. Si además busca posicionarse en su zona, la One-Page + SEO local parte en $180.000.', 'Y si quiere partir con la menor inversión, la Promoción Pyme es $45.990 de pago inicial + $25.000 al mes.'],
+      links: [QUOTE_LINK],
+      chips: ['Promoción Pyme', 'Plazos de entrega', 'Hablar con una persona'],
+    },
+    corporativo: {
+      text: ['El Sitio Corporativo (hasta 5 secciones, con formulario y SEO base) parte en $250.000; con blog, en $320.000.', 'Si prefiere partir con algo más liviano, la Promoción Pyme es $45.990 de pago inicial + $25.000 al mes, con dominio por 1 año.'],
+      links: [QUOTE_LINK],
+      chips: ['Promoción Pyme', 'Plazos de entrega', 'Hablar con una persona'],
+    },
+    otro: {
+      text: ['Cuénteme qué necesita (por ejemplo: reservas, un portal de clientes, SEO, redes sociales o un chatbot) y le oriento. También puede ver todos los valores o hablar con una persona del equipo.'],
+      chips: ['Precios', 'Módulos adicionales', 'Promoción Pyme', 'Hablar con una persona'],
+    },
     humano: {
       text: ['Con gusto. Una persona del equipo le responderá por WhatsApp, normalmente en menos de un día.'],
       links: [WA_LINK, { label: 'Escribir por correo', href: 'mailto:contacto@kadmiel.cl' }],
       chips: ['Precios'],
     },
     gracias: {
-      text: ['¡De nada! Si necesita algo más, aquí estoy.'],
+      text: ['¡De nada! Si necesita algo más, aquí estoy. — Aurora'],
       chips: MENU,
     },
     fallback: {
-      text: ['No estoy seguro de haber entendido. Puede elegir una de estas opciones o hablar directamente con el equipo.'],
+      text: ['Disculpe, no logré entender su consulta. Puede elegir una de estas opciones o hablar directamente con el equipo.'],
       links: [WA_LINK],
       chips: MENU,
     },
@@ -282,6 +307,7 @@ const phone = '56962206148';
 
   // Intención por palabras clave (el orden importa: lo más específico primero)
   const INTENTS: [string, RegExp][] = [
+    ['quien', /\b(quien eres|como te llamas|tu nombre|cual es tu nombre|eres (un )?(robot|bot|humano|persona|real)|cuantos anos|que edad|tu edad)\b/],
     ['humano', /\b(humano|persona|ejecutiv|asesor|vendedor|whatsapp|wasap|llamar|telefono|contacto|correo electronico|email)\b/],
     ['promo', /\b(promo|pyme|oferta|45\.?990|barato|economic)/],
     ['modulos', /\b(modulo|adicional|extra)/],
@@ -295,7 +321,9 @@ const phone = '56962206148';
     ['plazos', /\b(plazo|demora|tarda|tiempo|entrega|cuando|dias)\b/],
     ['proceso', /\b(proceso|como trabaj|etapas|pasos|metodolog)\b/],
     ['portafolio', /\b(portafolio|ejemplo|trabajos|proyectos|clientes)\b/],
-    ['precios', /\b(precio|cuesta|costo|valor|cotiz|presupuesto|tarifa|cuanto|landing|corporativ|plan)\b/],
+    ['precios', /\b(precio|cuesta|costo|valor|cotiz|presupuesto|tarifa|cuanto|plan)\b/],
+    ['landing', /\b(landing|one-?page|pagina de aterrizaje)\b/],
+    ['corporativo', /\b(corporativ|empresa|institucional|sitio web|pagina web)\b/],
     ['gracias', /\b(gracias|muchas gracias|genial|perfecto|ok)\b/],
     ['welcome', /^(hola|holi|buenas|buenos dias|buenas tardes|buenas noches|hey|ola)\b/],
   ];
@@ -312,6 +340,9 @@ const phone = '56962206148';
     'Módulos adicionales': 'modulos',
     'Velocidad y PageSpeed': 'velocidad',
     'Garantías': 'garantias',
+    'Landing Page': 'landing',
+    'Sitio Corporativo': 'corporativo',
+    'Otro servicio': 'otro',
   };
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -331,9 +362,9 @@ const phone = '56962206148';
   function build() {
     built = true;
     const head = el('div', 'kd-head');
-    head.append(el('span', 'kd-avatar', 'kD'));
+    head.append(el('span', 'kd-avatar', 'A'));
     const who = el('div');
-    who.append(el('strong', '', 'Asistente Kadmiel'), el('small', '', 'En línea'));
+    who.append(el('strong', '', 'Aurora'), el('small', '', 'Asistente de Kadmiel · En línea'));
     const x = el('button', 'kd-x') as HTMLButtonElement;
     x.type = 'button';
     x.setAttribute('aria-label', 'Cerrar chat');
@@ -366,7 +397,7 @@ const phone = '56962206148';
       ask(v);
     });
 
-    const foot = el('div', 'kd-foot', 'Asistente automático · Valores referenciales en CLP');
+    const foot = el('div', 'kd-foot', 'Aurora · Asistente virtual · Valores referenciales en CLP');
     panel.append(head, log, form, foot);
     reply('welcome', 0);
   }
@@ -446,7 +477,7 @@ const phone = '56962206148';
   function close(returnFocus: boolean) {
     panel.hidden = true;
     toggle.setAttribute('aria-expanded', 'false');
-    toggle.setAttribute('aria-label', 'Abrir chat con el asistente de Kadmiel');
+    toggle.setAttribute('aria-label', 'Abrir chat con Aurora, asistente de Kadmiel');
     if (returnFocus) toggle.focus();
   }
 
