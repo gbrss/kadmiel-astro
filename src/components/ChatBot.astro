@@ -1,0 +1,457 @@
+---
+// Chatbot flotante de Kadmiel: asistente de preguntas frecuentes (sin servicios externos).
+// El panel se construye recién cuando el visitante abre el chat, así no suma peso ni
+// trabajo al cargar la página (PageSpeed).
+const phone = '56962206148';
+---
+
+<button
+  type="button"
+  id="kd-chat-toggle"
+  class="kd-chat-float"
+  aria-label="Abrir chat con el asistente de Kadmiel"
+  aria-expanded="false"
+  aria-controls="kd-chat-panel"
+>
+  <svg class="kd-icon kd-icon--chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/>
+    <path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01" stroke-width="2.6"/>
+  </svg>
+  <svg class="kd-icon kd-icon--close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+    <path d="M6 6l12 12M18 6L6 18"/>
+  </svg>
+</button>
+
+<div id="kd-chat-panel" class="kd-chat-panel" role="dialog" aria-label="Asistente de Kadmiel" hidden data-phone={phone}></div>
+
+<style>
+  .kd-chat-float {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 6rem; /* a la izquierda del botón de WhatsApp (1.5rem + 3.75rem + separación) */
+    z-index: 9999;
+    width: 3.75rem;
+    height: 3.75rem;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #7c3aed 0%, #6366f1 50%, #06b6d4 100%);
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.5);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .kd-chat-float:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(99, 102, 241, 0.6); }
+  .kd-chat-float:focus-visible { outline: 3px solid #a5f3fc; outline-offset: 3px; }
+  .kd-icon { width: 1.7rem; height: 1.7rem; position: absolute; transition: opacity 0.2s ease, transform 0.25s ease; }
+  .kd-icon--close { opacity: 0; transform: rotate(-90deg) scale(0.6); }
+  .kd-chat-float[aria-expanded='true'] .kd-icon--chat { opacity: 0; transform: rotate(90deg) scale(0.6); }
+  .kd-chat-float[aria-expanded='true'] .kd-icon--close { opacity: 1; transform: none; }
+
+  @media (max-width: 640px) {
+    .kd-chat-float { bottom: 1.25rem; right: 5.5rem; width: 3.5rem; height: 3.5rem; }
+  }
+
+  .kd-chat-panel {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 6.25rem;
+    z-index: 9998;
+    width: min(23.5rem, calc(100vw - 2rem));
+    height: min(34rem, calc(100dvh - 8.5rem));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(139, 92, 246, 0.45);
+    background: #0b1120;
+    color: #e2e8f0;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.65), 0 0 40px rgba(124, 58, 237, 0.18);
+    transform-origin: bottom right;
+    animation: kdIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .kd-chat-panel[hidden] { display: none; }
+  @keyframes kdIn { from { opacity: 0; transform: translateY(12px) scale(0.96); } to { opacity: 1; transform: none; } }
+  @media (max-width: 640px) {
+    .kd-chat-panel { right: 1rem; bottom: 5.75rem; width: calc(100vw - 2rem); height: min(36rem, calc(100dvh - 7.5rem)); }
+  }
+</style>
+
+<style is:global>
+  .kd-head { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1rem; background: linear-gradient(135deg, #5b21b6, #4338ca 55%, #0e7490); color: #fff; }
+  .kd-avatar { width: 2.25rem; height: 2.25rem; border-radius: 0.65rem; background: rgba(255, 255, 255, 0.18); display: grid; place-items: center; font-weight: 800; font-size: 0.85rem; flex: none; }
+  .kd-head strong { display: block; font-size: 0.95rem; line-height: 1.2; }
+  .kd-head small { display: flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; color: #d1fae5; }
+  .kd-head small::before { content: ''; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #34d399; }
+  .kd-x { margin-left: auto; border: 0; background: transparent; color: #fff; cursor: pointer; padding: 0.35rem; border-radius: 0.5rem; line-height: 0; }
+  .kd-x:hover { background: rgba(255, 255, 255, 0.15); }
+  .kd-x:focus-visible, .kd-chip:focus-visible, .kd-link:focus-visible, .kd-send:focus-visible, .kd-input:focus-visible { outline: 2px solid #67e8f9; outline-offset: 2px; }
+
+  .kd-log { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.6rem; overscroll-behavior: contain; scroll-behavior: smooth; }
+  .kd-msg { max-width: 88%; padding: 0.6rem 0.85rem; border-radius: 1rem; font-size: 0.875rem; line-height: 1.5; animation: kdMsg 0.25s ease-out; }
+  .kd-msg p + p { margin-top: 0.45rem; }
+  .kd-bot { align-self: flex-start; background: #172036; border: 1px solid #243049; border-bottom-left-radius: 0.3rem; }
+  .kd-user { align-self: flex-end; background: linear-gradient(135deg, #6d28d9, #4f46e5); color: #fff; border-bottom-right-radius: 0.3rem; }
+  @keyframes kdMsg { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .kd-price { width: 100%; border-collapse: collapse; margin-top: 0.4rem; font-size: 0.8rem; }
+  .kd-price td { padding: 0.28rem 0; border-bottom: 1px solid #243049; }
+  .kd-price td:last-child { text-align: right; font-weight: 700; color: #c4b5fd; white-space: nowrap; padding-left: 0.6rem; }
+  .kd-price tr:last-child td { border-bottom: 0; }
+
+  .kd-typing { display: inline-flex; gap: 0.25rem; align-items: center; padding: 0.2rem 0; }
+  .kd-typing i { width: 0.4rem; height: 0.4rem; border-radius: 50%; background: #94a3b8; animation: kdDot 1s infinite ease-in-out; }
+  .kd-typing i:nth-child(2) { animation-delay: 0.15s; }
+  .kd-typing i:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes kdDot { 0%, 80%, 100% { opacity: 0.3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+
+  .kd-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; align-self: flex-start; max-width: 100%; }
+  .kd-chip, .kd-link { font: inherit; font-size: 0.8rem; font-weight: 600; padding: 0.4rem 0.75rem; border-radius: 999px; cursor: pointer; text-decoration: none; transition: background 0.2s, border-color 0.2s; }
+  .kd-chip { color: #c4b5fd; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.45); }
+  .kd-chip:hover { background: rgba(139, 92, 246, 0.22); }
+  .kd-link { display: inline-block; color: #6ee7b7; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.45); }
+  .kd-link:hover { background: rgba(16, 185, 129, 0.22); }
+  .kd-links { display: flex; flex-wrap: wrap; gap: 0.4rem; align-self: flex-start; }
+
+  .kd-form { display: flex; gap: 0.5rem; padding: 0.7rem; border-top: 1px solid #1e293b; background: #0b1120; }
+  .kd-input { flex: 1; min-width: 0; font: inherit; font-size: 16px; padding: 0.55rem 0.8rem; border-radius: 0.75rem; border: 1px solid #334155; background: #111a2e; color: #f1f5f9; }
+  .kd-input::placeholder { color: #94a3b8; }
+  .kd-send { flex: none; width: 2.6rem; border: 0; border-radius: 0.75rem; cursor: pointer; color: #fff; background: linear-gradient(135deg, #7c3aed, #06b6d4); display: grid; place-items: center; }
+  .kd-send:hover { filter: brightness(1.1); }
+  .kd-foot { padding: 0 0.8rem 0.6rem; font-size: 0.7rem; color: #94a3b8; text-align: center; background: #0b1120; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kd-chat-panel, .kd-msg, .kd-typing i { animation: none !important; }
+    .kd-log { scroll-behavior: auto; }
+  }
+</style>
+
+<script>
+  type Link = { label: string; href: string };
+  type Reply = { text?: string[]; rows?: [string, string][]; links?: Link[]; chips?: string[] };
+
+  const toggle = document.getElementById('kd-chat-toggle') as HTMLButtonElement;
+  const panel = document.getElementById('kd-chat-panel') as HTMLDivElement;
+  const phone = panel.dataset.phone || '56962206148';
+  const wa = (msg: string) => `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+
+  const MENU = ['Precios', 'Promoción Pyme', 'Plazos de entrega', 'Migrar desde WordPress', 'Tienda online', 'Hablar con una persona'];
+  const WA_LINK: Link = { label: 'Escribir por WhatsApp', href: wa('Hola! Vengo del chat de kadmiel.cl y quisiera cotizar un sitio web.') };
+  const QUOTE_LINK: Link = { label: 'Ir al cotizador', href: '#cotizador' };
+
+  const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9$.\s-]/g, ' ');
+
+  const R: Record<string, Reply> = {
+    welcome: {
+      text: ['¡Hola! Soy el asistente de Kadmiel.', 'Puedo orientarle sobre precios, plazos y servicios. ¿Qué le gustaría saber?'],
+      chips: MENU,
+    },
+    precios: {
+      text: ['Estos son nuestros valores referenciales en pesos chilenos:'],
+      rows: [
+        ['Promoción Pyme (inicial)', '$45.990'],
+        ['Landing Page', '$150.000'],
+        ['One-Page + SEO local', '$180.000'],
+        ['Sitio Corporativo', '$250.000'],
+        ['Migración desde WordPress', '$280.000'],
+        ['Corporativo + Blog', '$320.000'],
+        ['Sistema de Reservas', '$340.000'],
+        ['Catálogo / Tienda', '$360.000'],
+        ['E-commerce completo', '$420.000'],
+        ['Portal / Área de clientes', '$450.000'],
+      ],
+      links: [QUOTE_LINK],
+      chips: ['Promoción Pyme', 'Módulos adicionales', 'Hablar con una persona'],
+    },
+    modulos: {
+      text: ['Puede sumar módulos a cualquier proyecto:'],
+      rows: [
+        ['Analytics + Search Console', '$45.000'],
+        ['Dominio + correo corporativo', '$35.000'],
+        ['Chatbot de WhatsApp o IA', '$63.000'],
+        ['Fotografía y copywriting', '$75.000'],
+        ['Optimización Google Business', '$79.000'],
+        ['SEO técnico + on-page inicial', '$89.000'],
+        ['Gestión de redes sociales', '$99.000'],
+        ['Agente de ventas automatizado', '$99.000'],
+        ['Integración Webpay / pagos', '$120.000'],
+        ['Mantención mensual', '$49.000'],
+      ],
+      links: [QUOTE_LINK],
+      chips: ['Precios', 'Hablar con una persona'],
+    },
+    promo: {
+      text: [
+        'La Promoción Pyme Sitio Web tiene un pago inicial de $45.990 más $25.000 mensuales.',
+        'Incluye dominio por 1 año, el primer mes de hosting gratis, diseño 100% responsive y optimización SEO base.',
+      ],
+      links: [{ label: 'Quiero esta oferta', href: wa('Hola! Quiero la Promoción Pyme Sitio Web ($45.990 + $25.000/mes).') }],
+      chips: ['Plazos de entrega', 'Precios'],
+    },
+    plazos: {
+      text: [
+        'La entrega típica es de 7 a 15 días hábiles, según el alcance del proyecto.',
+        'Una vez que nos escribe, confirmamos alcance y precio cerrado en menos de 24 horas.',
+      ],
+      chips: ['Cómo trabajan', 'Precios', 'Hablar con una persona'],
+    },
+    proceso: {
+      text: [
+        'Trabajamos en 4 pasos:',
+        '1. Diagnóstico y cotización: confirmamos alcance y precio cerrado.',
+        '2. Diseño y estructura: usted aprueba antes de programar.',
+        '3. Desarrollo con Astro: HTML estático ultrarrápido, SEO técnico y los módulos solicitados.',
+        '4. Entrega y soporte: publicamos en su dominio, lo capacitamos y medimos PageSpeed antes de cerrar.',
+      ],
+      links: [{ label: 'Ver el proceso', href: '#proceso' }],
+      chips: ['Plazos de entrega', 'Garantías'],
+    },
+    wordpress: {
+      text: [
+        'Sí, migramos su sitio actual de WordPress a Astro: más rápido, más seguro y sin plugins que mantener. El valor referencial es desde $280.000.',
+      ],
+      links: [{ label: 'Comparativa vs WordPress', href: '#comparativa' }],
+      chips: ['Velocidad y PageSpeed', 'Hablar con una persona'],
+    },
+    tienda: {
+      text: [
+        'Para vender en línea tenemos Catálogo / Tienda (desde $360.000) y E-commerce completo (desde $420.000).',
+        'Los pagos con Webpay se agregan como módulo ($120.000).',
+      ],
+      links: [QUOTE_LINK],
+      chips: ['Módulos adicionales', 'Hablar con una persona'],
+    },
+    seo: {
+      text: [
+        'Todos los sitios incluyen SEO técnico base: estructura, velocidad y metadatos.',
+        'Si desea ir más allá, ofrecemos SEO técnico + on-page inicial ($89.000) y Optimización de Google Business ($79.000).',
+      ],
+      chips: ['Módulos adicionales', 'Precios'],
+    },
+    ia: {
+      text: [
+        'Podemos integrar un chatbot de WhatsApp o IA ($63.000) para responder consultas y captar clientes, o un agente de ventas automatizado ($99.000).',
+      ],
+      links: [QUOTE_LINK],
+      chips: ['Módulos adicionales', 'Hablar con una persona'],
+    },
+    hosting: {
+      text: [
+        'La Promoción Pyme incluye dominio por 1 año y el primer mes de hosting gratis; luego son $25.000 al mes.',
+        'También ofrecemos Dominio + correo corporativo ($35.000) y Mantención mensual ($49.000). Tras la entrega queda un período de ajustes incluido.',
+      ],
+      chips: ['Promoción Pyme', 'Garantías'],
+    },
+    velocidad: {
+      text: [
+        'Construimos con Astro: HTML estático, sin plugins pesados. Apuntamos a 95-100 en PageSpeed y a una carga inferior a 1 segundo.',
+        'Si no alcanza el estándar acordado, optimizamos sin costo extra hasta lograrlo.',
+      ],
+      links: [{ label: 'Ver comparativa', href: '#comparativa' }],
+      chips: ['Precios', 'Garantías'],
+    },
+    garantias: {
+      text: [
+        'Nuestras garantías: velocidad real (optimizamos sin costo hasta llegar al estándar acordado), precio cerrado sin cobros sorpresa, sitio seguro por su arquitectura estática y soporte post-entrega con ajustes incluidos.',
+      ],
+      links: [{ label: 'Ver garantías', href: '#garantias' }],
+      chips: ['Precios', 'Hablar con una persona'],
+    },
+    portafolio: {
+      text: ['Hemos desarrollado sitios para minería, turismo, catálogos y otros rubros. Puede verlos en nuestro portafolio.'],
+      links: [{ label: 'Ver portafolio', href: '#portafolio' }],
+      chips: ['Precios', 'Hablar con una persona'],
+    },
+    humano: {
+      text: ['Con gusto. Una persona del equipo le responderá por WhatsApp, normalmente en menos de un día.'],
+      links: [WA_LINK, { label: 'Escribir por correo', href: 'mailto:contacto@kadmiel.cl' }],
+      chips: ['Precios'],
+    },
+    gracias: {
+      text: ['¡De nada! Si necesita algo más, aquí estoy.'],
+      chips: MENU,
+    },
+    fallback: {
+      text: ['No estoy seguro de haber entendido. Puede elegir una de estas opciones o hablar directamente con el equipo.'],
+      links: [WA_LINK],
+      chips: MENU,
+    },
+  };
+
+  // Intención por palabras clave (el orden importa: lo más específico primero)
+  const INTENTS: [string, RegExp][] = [
+    ['humano', /\b(humano|persona|ejecutiv|asesor|vendedor|whatsapp|wasap|llamar|telefono|contacto|correo electronico|email)\b/],
+    ['promo', /\b(promo|pyme|oferta|45\.?990|barato|economic)/],
+    ['modulos', /\b(modulo|adicional|extra)/],
+    ['wordpress', /\b(wordpress|wix|migr)/],
+    ['tienda', /\b(tienda|ecommerce|e-commerce|vender|venta|webpay|carrito|catalogo|pagos?)\b/],
+    ['ia', /\b(chatbot|bot|ia|agente|automat|inteligencia)\b/],
+    ['seo', /\b(seo|google|posicion|buscador|ranking)\b/],
+    ['hosting', /\b(hosting|dominio|correo|mantencion|mantenimiento|soporte|servidor)\b/],
+    ['velocidad', /\b(pagespeed|velocidad|rapid|lent|astro|carga)\b/],
+    ['garantias', /\b(garantia|seguro|seguridad|confian)\b/],
+    ['plazos', /\b(plazo|demora|tarda|tiempo|entrega|cuando|dias)\b/],
+    ['proceso', /\b(proceso|como trabaj|etapas|pasos|metodolog)\b/],
+    ['portafolio', /\b(portafolio|ejemplo|trabajos|proyectos|clientes)\b/],
+    ['precios', /\b(precio|cuesta|costo|valor|cotiz|presupuesto|tarifa|cuanto|landing|corporativ|plan)\b/],
+    ['gracias', /\b(gracias|muchas gracias|genial|perfecto|ok)\b/],
+    ['welcome', /^(hola|holi|buenas|buenos dias|buenas tardes|buenas noches|hey|ola)\b/],
+  ];
+
+  // Texto de los botones rápidos -> intención
+  const CHIP_TO_INTENT: Record<string, string> = {
+    'Precios': 'precios',
+    'Promoción Pyme': 'promo',
+    'Plazos de entrega': 'plazos',
+    'Migrar desde WordPress': 'wordpress',
+    'Tienda online': 'tienda',
+    'Hablar con una persona': 'humano',
+    'Cómo trabajan': 'proceso',
+    'Módulos adicionales': 'modulos',
+    'Velocidad y PageSpeed': 'velocidad',
+    'Garantías': 'garantias',
+  };
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let built = false;
+  let log: HTMLDivElement;
+  let input: HTMLInputElement;
+  let busy = false;
+
+  const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text) n.textContent = text;
+    return n;
+  };
+  const scroll = () => { log.scrollTop = log.scrollHeight; };
+
+  function build() {
+    built = true;
+    const head = el('div', 'kd-head');
+    head.append(el('span', 'kd-avatar', 'kD'));
+    const who = el('div');
+    who.append(el('strong', '', 'Asistente Kadmiel'), el('small', '', 'En línea'));
+    const x = el('button', 'kd-x') as HTMLButtonElement;
+    x.type = 'button';
+    x.setAttribute('aria-label', 'Cerrar chat');
+    x.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+    x.addEventListener('click', () => close(true));
+    head.append(who, x);
+
+    log = el('div', 'kd-log') as HTMLDivElement;
+    log.setAttribute('role', 'log');
+    log.setAttribute('aria-live', 'polite');
+    log.setAttribute('aria-label', 'Conversación');
+
+    const form = el('form', 'kd-form') as HTMLFormElement;
+    input = el('input', 'kd-input') as HTMLInputElement;
+    input.type = 'text';
+    input.placeholder = 'Escriba su consulta…';
+    input.maxLength = 200;
+    input.autocomplete = 'off';
+    input.setAttribute('aria-label', 'Escriba su consulta');
+    const send = el('button', 'kd-send') as HTMLButtonElement;
+    send.type = 'submit';
+    send.setAttribute('aria-label', 'Enviar');
+    send.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
+    form.append(input, send);
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v = input.value.trim();
+      if (!v || busy) return;
+      input.value = '';
+      ask(v);
+    });
+
+    const foot = el('div', 'kd-foot', 'Asistente automático · Valores referenciales en CLP');
+    panel.append(head, log, form, foot);
+    reply('welcome', 0);
+  }
+
+  function addUser(text: string) {
+    log.querySelectorAll('.kd-chips').forEach((c) => c.remove());
+    log.append(el('div', 'kd-msg kd-user', text));
+    scroll();
+  }
+
+  function render(r: Reply) {
+    const msg = el('div', 'kd-msg kd-bot');
+    (r.text || []).forEach((t) => msg.append(el('p', '', t)));
+    if (r.rows) {
+      const table = el('table', 'kd-price');
+      r.rows.forEach(([a, b]) => {
+        const tr = el('tr');
+        tr.append(el('td', '', a), el('td', '', b));
+        table.append(tr);
+      });
+      msg.append(table);
+    }
+    log.append(msg);
+    if (r.links?.length) {
+      const box = el('div', 'kd-links');
+      r.links.forEach((l) => {
+        const a = el('a', 'kd-link', l.label) as HTMLAnchorElement;
+        a.href = l.href;
+        if (l.href.startsWith('http')) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+        else if (l.href.startsWith('#')) a.addEventListener('click', () => close(false));
+        box.append(a);
+      });
+      log.append(box);
+    }
+    if (r.chips?.length) {
+      const box = el('div', 'kd-chips');
+      r.chips.forEach((c) => {
+        const b = el('button', 'kd-chip', c) as HTMLButtonElement;
+        b.type = 'button';
+        b.addEventListener('click', () => ask(c));
+        box.append(b);
+      });
+      log.append(box);
+    }
+    scroll();
+  }
+
+  function reply(key: string, delay = 550) {
+    busy = true;
+    const typing = el('div', 'kd-msg kd-bot');
+    const dots = el('span', 'kd-typing');
+    dots.setAttribute('aria-label', 'Escribiendo');
+    dots.append(el('i'), el('i'), el('i'));
+    typing.append(dots);
+    if (delay) { log.append(typing); scroll(); }
+    window.setTimeout(() => {
+      typing.remove();
+      render(R[key] || R.fallback);
+      busy = false;
+    }, reduceMotion ? 0 : delay);
+  }
+
+  function ask(text: string) {
+    if (busy) return;
+    addUser(text);
+    const key = CHIP_TO_INTENT[text] || (INTENTS.find(([, re]) => re.test(norm(text))) || ['fallback'])[0];
+    reply(key);
+  }
+
+  function open() {
+    if (!built) build();
+    panel.hidden = false;
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.setAttribute('aria-label', 'Cerrar chat');
+    window.setTimeout(() => input?.focus({ preventScroll: true }), 50);
+  }
+  function close(returnFocus: boolean) {
+    panel.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Abrir chat con el asistente de Kadmiel');
+    if (returnFocus) toggle.focus();
+  }
+
+  toggle.addEventListener('click', () => (panel.hidden ? open() : close(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !panel.hidden) close(true);
+  });
+</script>
