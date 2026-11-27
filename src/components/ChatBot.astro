@@ -13,6 +13,7 @@ const phone = '56962206148';
   aria-expanded="false"
   aria-controls="kd-chat-panel"
 >
+  <span class="kd-badge" aria-hidden="true" hidden></span>
   <svg class="kd-icon kd-icon--chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/>
     <path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01" stroke-width="2.6"/>
@@ -21,6 +22,16 @@ const phone = '56962206148';
     <path d="M6 6l12 12M18 6L6 18"/>
   </svg>
 </button>
+
+<div id="kd-chat-teaser" class="kd-teaser" hidden>
+  <button type="button" class="kd-teaser-open" id="kd-teaser-open">
+    <strong>¡Hola! Soy Aurora 👋</strong>
+    <span>¿Busca un sitio web para su negocio? Pregúnteme por la Promoción Pyme.</span>
+  </button>
+  <button type="button" class="kd-teaser-x" id="kd-teaser-x" aria-label="Cerrar mensaje de Aurora">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+</div>
 
 <div id="kd-chat-panel" class="kd-chat-panel" role="dialog" aria-label="Chat con Aurora" hidden data-phone={phone}></div>
 
@@ -53,6 +64,50 @@ const phone = '56962206148';
   @media (max-width: 640px) {
     .kd-chat-float { bottom: 1.25rem; right: 5.5rem; width: 3.5rem; height: 3.5rem; }
   }
+
+  .kd-badge { position: absolute; top: 0.05rem; right: 0.05rem; width: 0.95rem; height: 0.95rem; border-radius: 50%; background: #ef4444; border: 2px solid #0b1120; }
+  .kd-badge[hidden] { display: none; }
+
+  .kd-teaser {
+    position: fixed;
+    right: 5.25rem;
+    bottom: 5.9rem;
+    z-index: 9997;
+    width: min(17.5rem, calc(100vw - 2.5rem));
+    padding: 0;
+    border-radius: 1rem 1rem 0.3rem 1rem;
+    background: #172036;
+    border: 1px solid rgba(139, 92, 246, 0.55);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55), 0 0 28px rgba(124, 58, 237, 0.2);
+    color: #e2e8f0;
+    animation: kdPop 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .kd-teaser[hidden] { display: none; }
+  /* colita que apunta al botón del chat */
+  .kd-teaser::after {
+    content: '';
+    position: absolute;
+    right: 2.1rem;
+    bottom: -0.45rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    background: #172036;
+    border-right: 1px solid rgba(139, 92, 246, 0.55);
+    border-bottom: 1px solid rgba(139, 92, 246, 0.55);
+    transform: rotate(45deg);
+  }
+  .kd-teaser-open { all: unset; box-sizing: border-box; display: block; width: 100%; cursor: pointer; padding: 0.8rem 2rem 0.8rem 0.95rem; font-size: 0.85rem; line-height: 1.45; border-radius: inherit; }
+  .kd-teaser-open strong { display: block; color: #fff; font-size: 0.9rem; margin-bottom: 0.15rem; }
+  .kd-teaser-open span { color: #cbd5e1; }
+  .kd-teaser-open:focus-visible, .kd-teaser-x:focus-visible { outline: 2px solid #67e8f9; outline-offset: 2px; }
+  .kd-teaser-x { position: absolute; top: 0.35rem; right: 0.35rem; width: 1.5rem; height: 1.5rem; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: #94a3b8; cursor: pointer; }
+  .kd-teaser-x:hover { background: rgba(148, 163, 184, 0.18); color: #fff; }
+  @keyframes kdPop { from { opacity: 0; transform: translateY(10px) scale(0.92); } to { opacity: 1; transform: none; } }
+  @media (max-width: 640px) {
+    .kd-teaser { right: 1rem; bottom: 5.6rem; width: min(17.5rem, calc(100vw - 2rem)); }
+    .kd-teaser::after { right: 4.9rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .kd-teaser { animation: none; } }
 
   .kd-chat-panel {
     position: fixed;
@@ -137,6 +192,7 @@ const phone = '56962206148';
   const phone = panel.dataset.phone || '56962206148';
   const wa = (msg: string) => `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 
+  const LEAD_CHIP = 'Quiero que me contacten';
   const WELCOME_CHIPS = ['Landing Page', 'Sitio Corporativo', 'Tienda online', 'Migrar desde WordPress', 'Promoción Pyme', 'Otro servicio'];
   const MENU = ['Precios', 'Promoción Pyme', 'Plazos de entrega', 'Migrar desde WordPress', 'Tienda online', 'Hablar con una persona'];
   const WA_LINK: Link = { label: 'Escribir por WhatsApp', href: wa('Hola! Vengo del chat de kadmiel.cl y quisiera cotizar un sitio web.') };
@@ -174,7 +230,7 @@ const phone = '56962206148';
         ['Portal / Área de clientes', '$450.000'],
       ],
       links: [QUOTE_LINK],
-      chips: ['Promoción Pyme', 'Módulos adicionales', 'Hablar con una persona'],
+      chips: ['Promoción Pyme', 'Módulos adicionales', LEAD_CHIP],
     },
     modulos: {
       text: ['Puede sumar módulos a cualquier proyecto:'],
@@ -191,7 +247,7 @@ const phone = '56962206148';
         ['Mantención mensual', '$49.000'],
       ],
       links: [QUOTE_LINK],
-      chips: ['Precios', 'Hablar con una persona'],
+      chips: ['Precios', LEAD_CHIP],
     },
     promo: {
       text: [
@@ -199,7 +255,7 @@ const phone = '56962206148';
         'Incluye dominio por 1 año, el primer mes de hosting gratis, diseño 100% responsive y optimización SEO base.',
       ],
       links: [{ label: 'Quiero esta oferta', href: wa('Hola! Quiero la Promoción Pyme Sitio Web ($45.990 + $25.000/mes).') }],
-      chips: ['Plazos de entrega', 'Precios'],
+      chips: ['Plazos de entrega', 'Precios', LEAD_CHIP],
     },
     plazos: {
       text: [
@@ -224,7 +280,7 @@ const phone = '56962206148';
         'Sí, migramos su sitio actual de WordPress a Astro: más rápido, más seguro y sin plugins que mantener. El valor referencial es desde $280.000.',
       ],
       links: [{ label: 'Comparativa vs WordPress', href: '#comparativa' }],
-      chips: ['Velocidad y PageSpeed', 'Hablar con una persona'],
+      chips: ['Velocidad y PageSpeed', LEAD_CHIP],
     },
     tienda: {
       text: [
@@ -232,7 +288,7 @@ const phone = '56962206148';
         'Los pagos con Webpay se agregan como módulo ($120.000).',
       ],
       links: [QUOTE_LINK],
-      chips: ['Módulos adicionales', 'Hablar con una persona'],
+      chips: ['Módulos adicionales', LEAD_CHIP],
     },
     seo: {
       text: [
@@ -246,7 +302,7 @@ const phone = '56962206148';
         'Podemos integrar un chatbot de WhatsApp o IA ($63.000) para responder consultas y captar clientes, o un agente de ventas automatizado ($99.000).',
       ],
       links: [QUOTE_LINK],
-      chips: ['Módulos adicionales', 'Hablar con una persona'],
+      chips: ['Módulos adicionales', LEAD_CHIP],
     },
     hosting: {
       text: [
@@ -278,21 +334,41 @@ const phone = '56962206148';
     landing: {
       text: ['Una Landing Page es una página enfocada en conversión; el valor referencial es desde $150.000. Si además busca posicionarse en su zona, la One-Page + SEO local parte en $180.000.', 'Y si quiere partir con la menor inversión, la Promoción Pyme es $45.990 de pago inicial + $25.000 al mes.'],
       links: [QUOTE_LINK],
-      chips: ['Promoción Pyme', 'Plazos de entrega', 'Hablar con una persona'],
+      chips: ['Promoción Pyme', 'Plazos de entrega', LEAD_CHIP],
     },
     corporativo: {
       text: ['El Sitio Corporativo (hasta 5 secciones, con formulario y SEO base) parte en $250.000; con blog, en $320.000.', 'Si prefiere partir con algo más liviano, la Promoción Pyme es $45.990 de pago inicial + $25.000 al mes, con dominio por 1 año.'],
       links: [QUOTE_LINK],
-      chips: ['Promoción Pyme', 'Plazos de entrega', 'Hablar con una persona'],
+      chips: ['Promoción Pyme', 'Plazos de entrega', LEAD_CHIP],
     },
     otro: {
       text: ['Cuénteme qué necesita (por ejemplo: reservas, un portal de clientes, SEO, redes sociales o un chatbot) y le oriento. También puede ver todos los valores o hablar con una persona del equipo.'],
-      chips: ['Precios', 'Módulos adicionales', 'Promoción Pyme', 'Hablar con una persona'],
+      chips: ['Precios', 'Módulos adicionales', 'Promoción Pyme', LEAD_CHIP],
     },
     humano: {
       text: ['Con gusto. Una persona del equipo le responderá por WhatsApp, normalmente en menos de un día.'],
       links: [WA_LINK, { label: 'Escribir por correo', href: 'mailto:contacto@kadmiel.cl' }],
-      chips: ['Precios'],
+      chips: [LEAD_CHIP, 'Precios'],
+    },
+    lead_start: {
+      text: ['Con gusto. Una persona del equipo le contactará con una propuesta cerrada.', '¿Cuál es su nombre?'],
+      chips: ['Cancelar'],
+    },
+    lead_cancel: {
+      text: ['Sin problema, quedo atenta. ¿En qué más puedo ayudarle?'],
+      chips: MENU,
+    },
+    no_ahora: {
+      text: ['Sin problema. Aquí estaré si necesita algo más.'],
+      chips: MENU,
+    },
+    lead_done: {
+      text: ['Ya recibimos sus datos y alguien del equipo le escribirá pronto. ¿Desea saber algo más?'],
+      chips: MENU,
+    },
+    edad: {
+      text: ['Tengo 36 años, aunque soy una asistente virtual 😊 Me crearon para ayudarle a elegir el sitio web ideal para su negocio.', '¿Qué servicio está buscando?'],
+      chips: WELCOME_CHIPS,
     },
     gracias: {
       text: ['¡De nada! Si necesita algo más, aquí estoy. — Aurora'],
@@ -307,7 +383,8 @@ const phone = '56962206148';
 
   // Intención por palabras clave (el orden importa: lo más específico primero)
   const INTENTS: [string, RegExp][] = [
-    ['quien', /\b(quien eres|como te llamas|tu nombre|cual es tu nombre|eres (un )?(robot|bot|humano|persona|real)|cuantos anos|que edad|tu edad)\b/],
+    ['edad', /\b(cuantos anos|que edad|tu edad|edad tienes|anos tienes|anos tenes|cuando naciste)\b/],
+    ['quien', /\b(quien eres|como te llamas|tu nombre|cual es tu nombre|eres (un )?(robot|bot|humano|persona|real))\b/],
     ['humano', /\b(humano|persona|ejecutiv|asesor|vendedor|whatsapp|wasap|llamar|telefono|contacto|correo electronico|email)\b/],
     ['promo', /\b(promo|pyme|oferta|45\.?990|barato|economic)/],
     ['modulos', /\b(modulo|adicional|extra)/],
@@ -339,11 +416,34 @@ const phone = '56962206148';
     'Cómo trabajan': 'proceso',
     'Módulos adicionales': 'modulos',
     'Velocidad y PageSpeed': 'velocidad',
+    [LEAD_CHIP]: 'lead_start',
+    'Cancelar': 'lead_cancel',
+    'Por ahora no': 'no_ahora',
     'Garantías': 'garantias',
     'Landing Page': 'landing',
     'Sitio Corporativo': 'corporativo',
     'Otro servicio': 'otro',
   };
+
+  // Etiquetas de interés que se envían en el aviso al equipo
+  const INTEREST: Record<string, string> = {
+    precios: 'Precios', promo: 'Promoción Pyme', landing: 'Landing Page', corporativo: 'Sitio Corporativo',
+    tienda: 'Tienda / E-commerce', wordpress: 'Migración desde WordPress', ia: 'Chatbot / IA', seo: 'SEO',
+    modulos: 'Módulos adicionales', hosting: 'Hosting / dominio', humano: 'Pide hablar con una persona',
+  };
+  const SALES = new Set(['precios', 'promo', 'landing', 'corporativo', 'tienda', 'wordpress', 'ia', 'seo', 'modulos']);
+
+  const interests = new Set<string>();
+  const history: string[] = [];
+  const lead: { name: string; phone: string; email: string } = { name: '', phone: '', email: '' };
+  let leadStep: '' | 'name' | 'phone' = '';
+  let leadSent = false;
+  let salesCount = 0;
+  let nudged = false;
+
+  const PHONE_IN_TEXT = /(\+?\d[\d\s().-]{7,}\d)/;
+  const EMAIL_IN_TEXT = /[^\s@]+@[^\s@]+\.[^\s@]{2,}/;
+  const validPhone = (v: string) => { const d = v.replace(/\D/g, ''); return d.length >= 8 && d.length <= 15; };
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let built = false;
@@ -460,14 +560,136 @@ const phone = '56962206148';
     }, reduceMotion ? 0 : delay);
   }
 
+  function say(lines: string[], extra: Partial<Reply> = {}, delay = 450) {
+    busy = true;
+    const typing = el('div', 'kd-msg kd-bot');
+    const dots = el('span', 'kd-typing');
+    dots.setAttribute('aria-label', 'Escribiendo');
+    dots.append(el('i'), el('i'), el('i'));
+    typing.append(dots);
+    log.append(typing);
+    scroll();
+    window.setTimeout(() => {
+      typing.remove();
+      render({ text: lines, ...extra });
+      busy = false;
+      input?.focus({ preventScroll: true });
+    }, reduceMotion ? 0 : delay);
+  }
+
+  async function sendLead() {
+    const payload = {
+      name: lead.name,
+      phone: lead.phone,
+      email: lead.email,
+      interest: [...interests].map((k) => INTEREST[k]).filter(Boolean),
+      messages: history.slice(-8),
+    };
+    try {
+      const res = await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  }
+
+  async function finishLead() {
+    leadStep = '';
+    busy = true;
+    const ok = await sendLead();
+    busy = false;
+    if (ok) {
+      leadSent = true;
+      const who = lead.name ? `, ${lead.name.split(' ')[0]}` : '';
+      say([`¡Gracias${who}! Recibimos sus datos y una persona del equipo le escribirá por WhatsApp, normalmente en menos de 24 horas.`, '¿Desea saber algo más mientras tanto?'], { chips: MENU });
+    } else {
+      say(['Lo siento, no pudimos enviar su solicitud en este momento. Puede escribirnos directamente por WhatsApp y le atenderemos igual.'], { links: [WA_LINK], chips: MENU });
+    }
+  }
+
   function ask(text: string) {
     if (busy) return;
     addUser(text);
-    const key = CHIP_TO_INTENT[text] || (INTENTS.find(([, re]) => re.test(norm(text))) || ['fallback'])[0];
+    const t = text.trim();
+
+    // 1) Flujo de captación: nombre -> teléfono
+    if (leadStep) {
+      if (CHIP_TO_INTENT[t] === 'lead_cancel' || /^cancel/i.test(norm(t).trim())) { leadStep = ''; reply('lead_cancel'); return; }
+      if (leadStep === 'name') {
+        if (t.length < 2 || PHONE_IN_TEXT.test(t) || EMAIL_IN_TEXT.test(t)) { say(['¿Podría indicarme su nombre, por favor?'], { chips: ['Cancelar'] }); return; }
+        lead.name = t.slice(0, 60);
+        leadStep = 'phone';
+        say([`Mucho gusto, ${lead.name.split(' ')[0]}. ¿A qué número de WhatsApp podemos escribirle?`, 'Por ejemplo: +56 9 1234 5678'], { chips: ['Cancelar'] });
+        return;
+      }
+      if (!validPhone(t)) { say(['Ese número no parece válido. ¿Puede escribirlo de nuevo? Por ejemplo: +56 9 1234 5678'], { chips: ['Cancelar'] }); return; }
+      lead.phone = t.slice(0, 40);
+      finishLead();
+      return;
+    }
+
+    // 2) Iniciar la captación desde el botón
+    const direct = CHIP_TO_INTENT[t];
+    if (direct === 'lead_start') {
+      if (leadSent) { reply('lead_done'); return; }
+      leadStep = lead.name ? 'phone' : 'name';
+      if (leadStep === 'phone') say(['Con gusto. ¿A qué número de WhatsApp podemos escribirle?'], { chips: ['Cancelar'] });
+      else reply('lead_start');
+      return;
+    }
+
+    // 3) Si el visitante escribe por su cuenta un teléfono o correo, es un contacto
+    const phoneIn = t.match(PHONE_IN_TEXT)?.[1];
+    const emailIn = t.match(EMAIL_IN_TEXT)?.[0];
+    if (!leadSent && ((phoneIn && validPhone(phoneIn)) || emailIn)) {
+      if (phoneIn && validPhone(phoneIn)) lead.phone = phoneIn;
+      if (emailIn) lead.email = emailIn;
+      finishLead();
+      return;
+    }
+
+    // 4) Consulta normal
+    const key = direct || (INTENTS.find(([, re]) => re.test(norm(t))) || ['fallback'])[0];
+    if (!direct) history.push(t.slice(0, 160));
+    if (INTEREST[key]) interests.add(key);
     reply(key);
+
+    // Tras la segunda consulta comercial, ofrecer que el equipo le contacte
+    if (SALES.has(key) && !leadSent) {
+      salesCount += 1;
+      if (salesCount === 2 && !nudged) {
+        nudged = true;
+        window.setTimeout(() => say(['¿Le gustaría que una persona del equipo le contacte para enviarle una propuesta cerrada?'], { chips: [LEAD_CHIP, 'Por ahora no'] }, 700), reduceMotion ? 0 : 1400);
+      }
+    }
   }
 
+  const teaser = document.getElementById('kd-chat-teaser') as HTMLDivElement;
+  const badge = toggle.querySelector('.kd-badge') as HTMLElement;
+  const seen = () => { try { return sessionStorage.getItem('kd-teaser') === '1'; } catch { return false; } };
+  const markSeen = () => { try { sessionStorage.setItem('kd-teaser', '1'); } catch { /* ignorar */ } };
+  function hideTeaser() {
+    teaser.hidden = true;
+    badge.hidden = true;
+    markSeen();
+  }
+  // Globo de bienvenida: una vez por visita, ya cargada la página (no afecta el rendimiento)
+  function scheduleTeaser() {
+    if (seen()) return;
+    window.setTimeout(() => {
+      if (!panel.hidden || seen()) return;
+      teaser.hidden = false;
+      badge.hidden = false;
+      window.setTimeout(() => { if (!teaser.hidden) hideTeaser(); }, 15000);
+    }, 3500);
+  }
+  if (document.readyState === 'complete') scheduleTeaser();
+  else window.addEventListener('load', scheduleTeaser, { once: true });
+  document.getElementById('kd-teaser-x')?.addEventListener('click', hideTeaser);
+  document.getElementById('kd-teaser-open')?.addEventListener('click', () => open());
+
   function open() {
+    hideTeaser();
     if (!built) build();
     panel.hidden = false;
     toggle.setAttribute('aria-expanded', 'true');
